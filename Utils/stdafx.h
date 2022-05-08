@@ -1,4 +1,4 @@
-#ifndef SRV_STDAFX_H
+п»ї#ifndef SRV_STDAFX_H
 #define SRV_STDAFX_H
 
 #pragma warning(push)
@@ -20,28 +20,32 @@
 #include <algorithm>
 #include <iomanip>
 #include <format>
-#include <conio.h>   //для getch
+#include <conio.h>   //РґР»СЏ getch
 //#include "Menu.h"
 #include <sstream>
+#include <WinSock2.h>
+#include <map>
+#include <cstdlib>
+#include <utility>
 
 #pragma warning(pop) //For /Wall
 
 namespace Checks {
-    int checkInt() //проверка на целые числа
+    int checkInt() //РїСЂРѕРІРµСЂРєР° РЅР° С†РµР»С‹Рµ С‡РёСЃР»Р°
     {
         int a;
         while (true) {
             std::cin >> a;
             try {
                 if ((std::cin.get() != '\n')) {
-                    throw "Некорректный ввод. \n";
+                    throw "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. \n";
                 }
                 break;
             }
             catch (const char *err) {
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
-                std::cout << err << "Повторите попытку: " << std::endl;
+                std::cout << err << "РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ: " << std::endl;
                 //cin >> a;
                 //break;
             }
@@ -63,14 +67,14 @@ namespace Checks {
             std::cin >> str;
             try {
                 if (str.length() > length) {
-                    throw "Cлишком длинная строка!!!";
+                    throw "CР»РёС€РєРѕРј РґР»РёРЅРЅР°СЏ СЃС‚СЂРѕРєР°!!!";
                 }
                 break;
             }
             catch (const char *err) {
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
-                std::cout << err << "Повторите попытку: " << std::endl;
+                std::cout << err << "РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ: " << std::endl;
             }
         }
         return str;
@@ -81,20 +85,20 @@ namespace Checks {
         while (true) {
             std::cin >> tmp;
             if (std::cin.get() != '\n') {
-                std::cout << " Ошибка ввода, повторите попытку: ";
+                std::cout << " РћС€РёР±РєР° РІРІРѕРґР°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ: ";
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
             } else break;
         }
     }
 }
-
+//----------------------------------------------------------------------------
 void sendInt(SOCKET newConnection, int a) {
     char msg[200];
     itoa(a, msg, 10);
     send(newConnection, msg, sizeof(msg), 0);
 }
-
+//----------------------------------------------------------------------------
 void sendDouble(SOCKET newConnection, double a) {
     std::string b;
     b = std::to_string(a);
@@ -102,16 +106,16 @@ void sendDouble(SOCKET newConnection, double a) {
     strcpy(msg, b.c_str());
     send(newConnection, msg, sizeof(msg), 0);
 }
-
+//----------------------------------------------------------------------------
 void sendString(SOCKET newConnection, std::string a) {
     //    char* msg = new char[a.size()];
-    char msg1[300];
+    char msg[300];
     //    strcpy(msg, a.c_str());
-    strcpy(msg1, a.c_str());
+    strcpy(msg, a.c_str());
     //size_t size_a = a.size();
-    send(newConnection, msg1, sizeof(msg1), 0);
+    send(newConnection, msg, sizeof(msg), 0);
 }
-
+//----------------------------------------------------------------------------
 int takeInt(SOCKET newConnection) {
     char msg[200];
     int a;
@@ -119,39 +123,39 @@ int takeInt(SOCKET newConnection) {
     a = atoi(msg);
     return a;
 }
-
+//----------------------------------------------------------------------------
 double takeDouble(SOCKET newConnection) {
     char msg[200];
     recv(newConnection, msg, sizeof(msg), 0);
     double a = atof(msg);
     return a;
 }
-
+//----------------------------------------------------------------------------
 std::string takeString(SOCKET newConnection) {
-    char msg[400];
+    char msg[300];
     recv(newConnection, msg, sizeof(msg), 0);
     std::string str = std::string(msg);
     return str;
 }
-
+//----------------------------------------------------------------------------
 std::string remoteIP(SOCKADDR_IN FromAddr) {
-    return "IP клиента: " + std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b1) + "." +
+    return "IP РєР»РёРµРЅС‚Р°: " + std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b1) + "." +
            std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b2) + "." +
            std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b3) + "." +
            std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b4) + "\n";
 }
-
+//----------------------------------------------------------------------------
 struct tUser {
     std::string name;
     std::string login;
     std::string pass;
-    int Role;
+    std::string Role;
 };
-
-std::string input_pass(char *str1)    //Функция ввода массива символов
-{                                                                //name - что вводим,
-    //str строка,
-    //num=1 если нужны только символы
+//----------------------------------------------------------------------------
+std::string input_pass(/*char *str1*/)    //Р¤СѓРЅРєС†РёСЏ РІРІРѕРґР° РјР°СЃСЃРёРІР° СЃРёРјРІРѕР»РѕРІ
+{                                                                //name - С‡С‚Рѕ РІРІРѕРґРёРј,
+    //str СЃС‚СЂРѕРєР°,
+    //num=1 РµСЃР»Рё РЅСѓР¶РЅС‹ С‚РѕР»СЊРєРѕ СЃРёРјРІРѕР»С‹
     size_t nn = 0;
     size_t mm = 0;
     int num = 0;
@@ -175,23 +179,23 @@ std::string input_pass(char *str1)    //Функция ввода массива символов
     } while ((nn != 10) && (nn != 13));
     printf("\n");
     str[mm] = '\0';
-    strncpy(str1, str, mm);
-    return str1;
+    //strncpy(str1, str, mm);
+    return str;
 }
-
+//----------------------------------------------------------------------------
 std::string encryptChars(char *str) {
     char mask = (sin(3.14) * 400) - (cos(3.14) * 250 / 20);
     for (size_t i = 0; i < (strlen(str)); i++)
         str[i] = (str[i] ^ mask);
     return str;
 }
-
+//----------------------------------------------------------------------------
 void encryptChars(std::string &str) {
     char mask = (sin(3.14) * 400) - (cos(3.14) * 250 / 20);
     for (size_t i = 0; i < (str.size()); i++)
         str[i] = (str[i] ^ mask);
 }
-
+//----------------------------------------------------------------------------
 std::vector<std::string> split(const std::string &s, char delimiter = '#') {
     std::vector<std::string> tokens;
     std::string token;
@@ -201,14 +205,29 @@ std::vector<std::string> split(const std::string &s, char delimiter = '#') {
     }
     return tokens;
 }
-
+//----------------------------------------------------------------------------
 std::string toString(std::vector<std::string> a, std::string text = "") {
     for (auto it: a) {
         text += "#" + it;
     }
     return text;
 }
-
+//----------------------------------------------------------------------------
+std::string toString(std::map<std::string, size_t> a, std::string text = "") {
+    for (auto it : a) {
+        text += "#" + it.first;
+    }
+    return text;
+}
+//----------------------------------------------------------------------------
+std::vector<std::string> toVector(std::map<std::string, size_t> a) {
+    std::vector<std::string> tmp;
+    for (auto it : a) {
+        tmp.push_back(it.first);
+    }
+    return tmp;
+}
+//----------------------------------------------------------------------------
 void sendMenu(SOCKET Connection, std::vector<std::string> a) {
     char msg1[300];
     for (auto it: a) {
@@ -218,20 +237,20 @@ void sendMenu(SOCKET Connection, std::vector<std::string> a) {
     strcpy(msg1, "end");
     send(Connection, msg1, sizeof(msg1), 0);
 }
-
+//----------------------------------------------------------------------------
 std::vector<std::string> takeMenu(SOCKET Connection) {
     char msg[300];
     recv(Connection, msg, sizeof(msg), 0);
     std::string str = std::string(msg);
     return split(str, '#');
 }
-
+//----------------------------------------------------------------------------
 int vcChoice(const std::string &strMenu, std::vector<std::string> vc, bool back = false) {
-    std::cout << "Выберите " + strMenu + ": " << std::endl;
+    std::cout << "Р’С‹Р±РµСЂРёС‚Рµ " + strMenu + ": " << std::endl;
     for (size_t i = 0; i < vc.size(); ++i) {
         std::cout << std::setw(2) << i + 1 << ". " << vc[i] << std::endl;
     }
-    if (back) std::cout << "0. -= ОТМЕНА =- " << std::endl;
+    if (back) std::cout << "0. -= РћРўРњР•РќРђ =- " << std::endl;
     int ch = -1;
     do {
         std::cin >> ch;
@@ -239,5 +258,77 @@ int vcChoice(const std::string &strMenu, std::vector<std::string> vc, bool back 
     } while ((ch < 0) || (ch > vc.size()));
     return ch;
 }
+//----------------------------------------------------------------------------
+std::wstring str_to_wstr(const std::string& s, const unsigned cp)
+{
+    std::wstring res;
+    unsigned length =
+        MultiByteToWideChar
+        (
+            cp, //CodePage
+            0, //dwFlags
+            s.c_str(), //lpMultiByteStr
+            -1, //cchMultiByte
+            0, //lpWideCharStr
+            0 //cchWideChar
+        );
+    wchar_t* buffer = new wchar_t[length];
+    if
+        (
+            MultiByteToWideChar
+            (
+                cp, //CodePage
+                0, //dwFlags
+                s.c_str(), //lpMultiByteStr
+                -1, //cchMultiByte
+                buffer, //lpWideCharStr
+                length //cchWideChar
+            )
+            )
+        res = buffer;
+    delete[] buffer;
+    return res;
+}
+//----------------------------------------------------------------------------
+std::string wstr_to_str(const std::wstring& s, const unsigned cp)
+{
+    std::string res;
+    unsigned length =
+        WideCharToMultiByte
+        (
+            cp, //CodePage
+            0, //dwFlags
+            s.c_str(), //lpWideCharStr
+            -1, //cchWideChar
+            0, //lpMultiByteStr
+            0, //cchMultiByte
+            0, //lpDefaultChar
+            0 //lpUsedDefaultChar
+        );
+    char* buffer = new char[length];
+    if
+        (
+            WideCharToMultiByte
+            (
+                cp, //CodePage
+                0, //dwFlags
+                s.c_str(), //lpWideCharStr
+                -1, //cchWideChar
+                buffer, //lpMultiByteStr
+                length, //cchMultiByte
+                0, //lpDefaultChar
+                0 //lpUsedDefaultChar
+            )
+            )
+        res = buffer;
+    delete[] buffer;
+    return res;
+}
+//----------------------------------------------------------------------------
+std::string acp(const std::string& s)
+{
+    return wstr_to_str(str_to_wstr(s, CP_UTF8), CP_ACP);
+}
+//----------------------------------------------------------------------------
 
 #endif //SRV_STDAFX_H

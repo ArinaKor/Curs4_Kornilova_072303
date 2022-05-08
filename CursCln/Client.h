@@ -1,4 +1,4 @@
-#ifndef CURSSRV_SERVER_H
+﻿#ifndef CURSSRV_SERVER_H
 #define CURSSRV_SERVER_H
 
 #define _CRT_SECURE_NO_WARNINGS

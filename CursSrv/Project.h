@@ -1,4 +1,4 @@
-#ifndef CURSSRV_PROJECT_H
+Ôªø#ifndef CURSSRV_PROJECT_H
 #define CURSSRV_PROJECT_H
 
 #include <utility>
@@ -13,276 +13,359 @@ using namespace Checks;
 
 class Project {
 private:
-    size_t project_id;
-    std::string project_name;
-    double sum_credit;
-    size_t credit_time;
-    std::string sud_reestr;
-    Date application_date{};
-    size_t company_id;
+	size_t project_id;
+	std::string project_name;
+	size_t sum_credit;
+	size_t credit_time;
+	std::string sud_reestr;
+	Date application_date{};
+	size_t company_id;
 public:
+	vector<string> Companies;
 
-    Project() {
-        project_id = 0;
-        sum_credit = 0;
-        credit_time = 0;
-        application_date = {};
-        company_id = 0;
-    }
+	Project() {
+		project_id = 0;
+		sum_credit = 0;
+		credit_time = 0;
+		application_date = {};
+		company_id = 0;
+	}
 
-    Project(size_t _projectId, std::string _projectName, double _sumCredit, size_t _creditTime,
-            std::string _sudReestr, const Date &_applicationDate, size_t _companyId) : project_id(_projectId),
-                                                                                       project_name(
-                                                                                               std::move(_projectName)),
-                                                                                       sum_credit(_sumCredit),
-                                                                                       credit_time(_creditTime),
-                                                                                       sud_reestr(
-                                                                                               std::move(_sudReestr)),
-                                                                                       application_date(
-                                                                                               _applicationDate),
-                                                                                       company_id(_companyId) {}
+	Project(vector<string> vc) {
+		Companies = std::move(vc);
+		project_id = 0;
+		sum_credit = 0;
+		credit_time = 0;
+		application_date = {};
+		company_id = 0;
+	}
 
-    size_t getProjectId() const {
-        return project_id;
-    }
+	Project(size_t _projectId, std::string _projectName, size_t _sumCredit, size_t _creditTime,
+		std::string _sudReestr, const Date& _applicationDate, size_t _companyId) : project_id(_projectId),
+		project_name(
+			std::move(_projectName)),
+		sum_credit(_sumCredit),
+		credit_time(_creditTime),
+		sud_reestr(
+			std::move(_sudReestr)),
+		application_date(
+			_applicationDate),
+		company_id(_companyId) {}
 
-    const std::string &getProjectName() const {
-        return project_name;
-    }
+	size_t getProjectId() const {
+		return project_id;
+	}
 
-    double getSumCredit() const {
-        return sum_credit;
-    }
+	const std::string& getProjectName() const {
+		return project_name;
+	}
 
-    size_t getCreditTime() const {
-        return credit_time;
-    }
+	size_t getSumCredit() const {
+		return sum_credit;
+	}
 
-    const std::string &getSudReestr() const {
-        return sud_reestr;
-    }
+	size_t getCreditTime() const {
+		return credit_time;
+	}
 
-    const Date &getApplicationDate() const {
-        return application_date;
-    }
+	const std::string& getSudReestr() const {
+		return sud_reestr;
+	}
 
-    size_t getCompanyId() const {
-        return company_id;
-    }
+	const Date& getApplicationDate() const {
+		return application_date;
+	}
 
-    void setProjectId(size_t _projectId) {
-        project_id = _projectId;
-    }
+	size_t getCompanyId() const {
+		return company_id;
+	}
 
-    void setProjectName(const std::string &_projectName) {
-        project_name = _projectName;
-    }
+	void setProjectId(size_t _projectId) {
+		project_id = _projectId;
+	}
 
-    void setSumCredit(double _sumCredit) {
-        sum_credit = _sumCredit;
-    }
+	void setProjectName(const std::string& _projectName) {
+		project_name = _projectName;
+	}
+
+	void setSumCredit(size_t _sumCredit) {
+		sum_credit = _sumCredit;
+	}
 
 
-    void setCreditTime(size_t _creditTime) {
-        credit_time = _creditTime;
-    }
+	void setCreditTime(size_t _creditTime) {
+		credit_time = _creditTime;
+	}
 
 
-    void setSudReestr(const std::string &_sudReestr) {
-        sud_reestr = _sudReestr;
-    }
+	void setSudReestr(const std::string& _sudReestr) {
+		sud_reestr = _sudReestr;
+	}
 
-    void setApplicationDate(const Date &_applicationDate) {
-        application_date = _applicationDate;
-    }
+	void setApplicationDate(const Date& _applicationDate) {
+		application_date = _applicationDate;
+	}
 
-    void setCompanyId(size_t _companyId) {
-        company_id = _companyId;
-    }
+	void setCompanyId(size_t _companyId) {
+		company_id = _companyId;
+	}
 
-    bool operator==(const Project &rhs) const {
-        return project_id == rhs.project_id &&
-               project_name == rhs.project_name &&
-               sum_credit == rhs.sum_credit &&
-               credit_time == rhs.credit_time &&
-               sud_reestr == rhs.sud_reestr &&
-               application_date == rhs.application_date &&
-               company_id == rhs.company_id;
-    }
+	bool operator==(const Project& rhs) const {
+		return project_id == rhs.project_id &&
+			project_name == rhs.project_name &&
+			sum_credit == rhs.sum_credit &&
+			credit_time == rhs.credit_time &&
+			sud_reestr == rhs.sud_reestr &&
+			application_date == rhs.application_date &&
+			company_id == rhs.company_id;
+	}
 
-    bool operator!=(const Project &rhs) const {
-        return !(rhs == *this);
-    }
+	bool operator!=(const Project& rhs) const {
+		return !(rhs == *this);
+	}
 
-    friend std::ostream &operator<<(std::ostream &os, const Project &project) {
-        os << "project_id: " << project.project_id << " project_name: " << project.project_name << " sum_credit: "
-           << project.sum_credit << " credit_time: " << project.credit_time << " sud_reestr: " << project.sud_reestr
-           << " application_date: " << project.application_date << " company_id: " << project.company_id;
-        return os;
-    }
+	friend std::ostream& operator<<(std::ostream& os, const Project& project) {
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		os << " project_id: " << project.project_id << endl;
+		os << " project_name: " << project.project_name << endl;
+		os << " sum_credit: " << project.sum_credit << endl;
+		os << " credit_time: " << project.credit_time << endl;
+		os << " sud_reestr: " << project.sud_reestr << endl;
+		os << " application_date: " << project.application_date << endl;
+		os << " company_id: " << project.company_id << endl;
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		return os;
+	}
 
-    void setProject(size_t _projectId, std::string _projectName, double _sumCredit, size_t _creditTime,
-                    std::string _sudReestr, const Date &_applicationDate, size_t _companyId) {
-        project_id = _projectId;
-        project_name = std::move(_projectName);
-        sum_credit = _sumCredit;
-        credit_time = _creditTime;
-        sud_reestr = std::move(_sudReestr);
-        application_date = _applicationDate;
-        company_id = _companyId;
-    }
+	void setProject(size_t _projectId, std::string _projectName, size_t _sumCredit, size_t _creditTime,
+		std::string _sudReestr, std::string _applicationDate, size_t _companyId) {
+		project_id = _projectId;
+		project_name = std::move(_projectName);
+		sum_credit = _sumCredit;
+		credit_time = _creditTime;
+		sud_reestr = std::move(_sudReestr);
+		application_date.setDateStr(_applicationDate);
+		company_id = _companyId;
+	}
 
-    void setProject(const Project &rhs) {
-        project_id = rhs.project_id;
-        project_name = rhs.project_name;
-        sum_credit = rhs.sum_credit;
-        credit_time = rhs.credit_time;
-        sud_reestr = rhs.sud_reestr;
-        application_date = rhs.application_date;
-        company_id = rhs.company_id;
-    }
+	void setProject(const Project& rhs) {
+		project_id = rhs.project_id;
+		project_name = rhs.project_name;
+		sum_credit = rhs.sum_credit;
+		credit_time = rhs.credit_time;
+		sud_reestr = rhs.sud_reestr;
+		application_date = rhs.application_date;
+		company_id = rhs.company_id;
+	}
 
-    static void enterProject(Project &tmp) {
-        size_t _projectId, _creditTime, _companyId;
-        double _sumCredit;
-        std::string _projectName, _sudReestr, _sumCreditStr, _creditTimeStr, _companyIdStr;
-        Date _applicationDate{};
-        _projectId = 0;
-        //Õ‡ËÏÂÌÓ‚‡ÌËÂ ÔÓÂÍÚ‡
-        do {
-            cout << "Õ‡ËÏÂÌÓ‚‡ÌËÂ: ";
-            cin >> _projectName;
-            if (Checks::checkNoNumbers(_projectName)) {
-                break;
-            } else
-                cout << "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n";
-        } while (true);
-        do {
-            cout << "—ÛÏÏÛ ÍÂ‰ËÚ‡: ";
-            cin >> _sumCreditStr;
-            if (Checks::checkNoLetters(_sumCreditStr)) {
-                _sumCredit = stod(_sumCreditStr);
-                break;
-            } else
-                cout << "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n";
-        } while (true);
-        do {
-            cout << "—ÓÍ ÍÂ‰ËÚÓ‚‡ÌËˇ: ";
-            cin >> _creditTimeStr;
-            if (Checks::checkNoLetters(_creditTimeStr)) {
-                _creditTime = stol(_creditTimeStr);
-                break;
-            } else
-                std::cout << "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n";
-        } while (true);
-        do {
-            cout << "—Û‰Â·Ì˚È ÂÂÒÚ: ";
-            cin >> _projectName;
-            if (Checks::checkNoNumbers(_sudReestr)) {
-                break;
-            } else
-                cout << "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n";
-        } while (true);
-        cout << "ƒ‡Ú‡ ÔÓ‰‡˜Ë Á‡ˇ‚ÍË: ";
-        _applicationDate.inputDate();
-        //_applicationDate.getDateStr(); //std::string
-        tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate, _companyId);
-    }
-
+	static void enterProject(Project& tmp) {
+		size_t _projectId, _creditTime, _companyId;
+		size_t _sumCredit;
+		std::string _projectName, _sudReestr, _sumCreditStr, _creditTimeStr, _companyIdStr;
+		Date _applicationDate{};
+		_projectId = 0;
+		//–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ –ø—Ä–æ–µ–∫—Ç–∞
+		do {
+			cout << "–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ: ";
+			cin >> _projectName;
+			if (Checks::checkNoNumbers(_projectName)) {
+				break;
+			}
+			else
+				cout << "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n";
+		} while (true);
+		do {
+			cout << "–°—É–º–º—É –∫—Ä–µ–¥–∏—Ç–∞: ";
+			cin >> _sumCreditStr;
+			if (Checks::checkNoLetters(_sumCreditStr)) {
+				_sumCredit = stol(_sumCreditStr);
+				break;
+			}
+			else
+				cout << "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n";
+		} while (true);
+		do {
+			cout << "–°—Ä–æ–∫ –∫—Ä–µ–¥–∏—Ç–æ–≤–∞–Ω–∏—è: ";
+			cin >> _creditTimeStr;
+			if (Checks::checkNoLetters(_creditTimeStr)) {
+				_creditTime = stol(_creditTimeStr);
+				break;
+			}
+			else
+				std::cout << "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n";
+		} while (true);
+		do {
+			cout << "–°—É–¥–µ–±–Ω—ã–π —Ä–µ–µ—Å—Ç—Ä: ";
+			cin >> _projectName;
+			if (Checks::checkNoNumbers(_sudReestr)) {
+				break;
+			}
+			else
+				cout << "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n";
+		} while (true);
+		cout << "–î–∞—Ç–∞ –ø–æ–¥–∞—á–∏ –∑–∞—è–≤–∫–∏: ";
+		_applicationDate.inputDate();
+		//_applicationDate.getDateStr(); //std::string
+		do {
+			cout << "–ö–æ–¥ –ö–æ–º–ø–∞–Ω–∏–∏: ";
+			cin >> _companyIdStr;
+			if (Checks::checkNoLetters(_companyIdStr)) {
+				_companyId = stol(_companyIdStr);
+				break;
+			}
+			else
+				cout << "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n";
+		} while (true);
+		tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
+	}
 };
 
 class ProjectSock : public Project {
 public:
-    SOCKET sock;
+	SOCKET sock;
 
-    explicit ProjectSock(const SOCKET &sock) : sock(sock) {}
+	explicit ProjectSock(const SOCKET& _sock, std::vector<std::string> vc) : Project(std::move(vc)) {
+		this->sock = _sock;
+	}
 
-    Date inputDateSock() {
-        Date tmp{};
-        std::string _year, _month, _day;
-        do {
-            sendString(sock, "√Ó‰: ");
-            do {
-                _year = takeString(sock);
-                if (Checks::checkNoLetters(_year)) {
-                    tmp.year = stol(_year);
-                    if(tmp.CheckYear(tmp.year) == 0) sendString(sock, "ÕÂ‚ÂÌ˚È „Ó‰! œÓ‚ÚÓËÚÂ ‚‚Ó‰.\n√Ó‰: ");
-                    else break;
-                } else
-                    sendString(sock, "ÕÂ‚ÂÌ˚È „Ó‰! œÓ‚ÚÓËÚÂ ‚‚Ó‰.\n√Ó‰: ");
-            } while (true);
-            break;
-        } while (true);
-        size_t max_day;
-        do {
-            std::cout << "ÃÂÒˇˆ: ";
-            Checks::CheckInput(tmp.month);
-            max_day = tmp.CheckMon(tmp.year, tmp.month);
-        } while (max_day == 0);
-        do {
-            std::cout << "ƒÂÌ¸: ";
-            Checks::CheckInput(tmp.day);
-            tmp.day = tmp.CheckDay(max_day, tmp.day);
-        } while (tmp.day == 0);
-    }
+	Date inputDateSock() const {
+		Date tmp{};
+		std::string _year, _month, _day;
+		do {
+			sendString(sock, "–ì–æ–¥: ");
+			do {
+				_year = takeString(sock);
+				if (Checks::checkNoLetters(_year)) {
+					tmp.year = stol(_year);
+					if (Date::CheckYear(tmp.year) == 0) sendString(sock, "–ù–µ–≤–µ—Ä–Ω—ã–π –≥–æ–¥! –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –≤–≤–æ–¥.\n–ì–æ–¥: ");
+					else break;
+				}
+				else
+					sendString(sock, "–ù–µ–≤–µ—Ä–Ω—ã–π –≥–æ–¥! –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –≤–≤–æ–¥.\n–ì–æ–¥: ");
+			} while (true);
+			break;
+		} while (true);
+		size_t max_day;
+		do {
+			std::cout << "–ú–µ—Å—è—Ü: ";
+			Checks::CheckInput(tmp.month);
+			max_day = Date::CheckMon(tmp.year, tmp.month);
+		} while (max_day == 0);
+		do {
+			std::cout << "–î–µ–Ω—å: ";
+			Checks::CheckInput(tmp.day);
+			tmp.day = Date::CheckDay(max_day, tmp.day);
+		} while (tmp.day == 0);
+	}
 
-    void enterProject() {
-        size_t _projectId, _creditTime, _companyId;
-        double _sumCredit;
-        std::string _projectName, _sudReestr, _sumCreditStr, _creditTimeStr, _companyIdStr;
-        Date _applicationDate{};
-        _projectId = 0;
-        sendString(sock, "data");
-        //Õ‡ËÏÂÌÓ‚‡ÌËÂ ÔÓÂÍÚ‡
-        sendString(sock, "Õ‡ËÏÂÌÓ‚‡ÌËÂ ÔÓÂÍÚ‡: ");
-        do {
-            _projectName = takeString(sock);
-            if (Checks::checkNoNumbers(_projectName)) {
-                break;
-            } else
-                sendString(sock, "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\nÕ‡ËÏÂÌÓ‚‡ÌËÂ: ");
-        } while (true);
-        sendString(sock, "—ÛÏÏÛ ÍÂ‰ËÚ‡: ");
-        do {
-            _sumCreditStr = takeString(sock);
-            if (Checks::checkNoLetters(_sumCreditStr)) {
-                _sumCredit = stod(_sumCreditStr);
-                break;
-            } else
-                sendString(sock, "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n—ÛÏÏÛ ÍÂ‰ËÚ‡: ");
-        } while (true);
-        sendString(sock, "—ÓÍ ÍÂ‰ËÚÓ‚‡ÌËˇ: ");
-        do {
-            _creditTimeStr = takeString(sock);
-            if (Checks::checkNoLetters(_creditTimeStr)) {
-                _creditTime = stol(_creditTimeStr);
-                break;
-            } else
-                sendString(sock, "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n—ÓÍ ÍÂ‰ËÚÓ‚‡ÌËˇ: ");
-        } while (true);
-        sendString(sock, "—Û‰Â·Ì˚È ÂÂÒÚ: ");
-        do {
-            _projectName = takeString(sock);
-            if (Checks::checkNoNumbers(_sudReestr)) {
-                break;
-            } else
-                sendString(sock, "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\n—Û‰Â·Ì˚È ÂÂÒÚ: ");
-        } while (true);
-        //sendString(sock, "ƒ‡Ú‡ ÔÓ‰‡˜Ë Á‡ˇ‚ÍË: ");
-        //_applicationDate.inputDate();
-        _applicationDate.getDateStr(); //std::string
-        sendString(sock, "Õ‡ËÏÂÌÓ‚‡ÌËÂ ÍÓÏÔ‡ÌËË: ");
-        do {
-            _companyIdStr = takeString(sock);
-            if (Checks::checkNoNumbers(_companyIdStr)) {
-                _companyId = stol(_companyIdStr);
-                break;
-            } else
-                sendString(sock, "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓ‚ÚÓËÚÂ ÔÓÔ˚ÚÍÛ.\nÕ‡ËÏÂÌÓ‚‡ÌËÂ ÍÓÏÔ‡ÌËË: ");
-        } while (true);
-        sendString(sock, "end");
-        setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate, _companyId);
-    }
+	void enterProject() {
+		size_t _projectId, _creditTime, _companyId;
+		size_t _sumCredit;
+		std::string _projectName, _sudReestr, _sumCreditStr, _creditTimeStr; // , _companyIdStr;
+		Date _applicationDate{};
+		_projectId = 0;
+		sendString(sock, "data");
+
+		//–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ –ø—Ä–æ–µ–∫—Ç–∞
+		sendString(sock, "–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ –ø—Ä–æ–µ–∫—Ç–∞: ");
+		do {
+			_projectName = takeString(sock);
+			if (Checks::checkNoNumbers(_projectName)) {
+				break;
+			}
+			else
+				sendString(sock, "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ: ");
+		} while (true);
+
+		sendString(sock, "–°—É–º–º—É –∫—Ä–µ–¥–∏—Ç–∞: ");
+		do {
+			_sumCreditStr = takeString(sock);
+			if (Checks::checkNoLetters(_sumCreditStr)) {
+				_sumCredit = stol(_sumCreditStr);
+				break;
+			}
+			else
+				sendString(sock, "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n–°—É–º–º—É –∫—Ä–µ–¥–∏—Ç–∞: ");
+		} while (true);
+
+		sendString(sock, "–°—Ä–æ–∫ –∫—Ä–µ–¥–∏—Ç–æ–≤–∞–Ω–∏—è: ");
+		do {
+			_creditTimeStr = takeString(sock);
+			if (Checks::checkNoLetters(_creditTimeStr)) {
+				_creditTime = stol(_creditTimeStr);
+				break;
+			}
+			else
+				sendString(sock, "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n–°—Ä–æ–∫ –∫—Ä–µ–¥–∏—Ç–æ–≤–∞–Ω–∏—è: ");
+		} while (true);
+
+		/*sendString(sock, "–°—É–¥–µ–±–Ω—ã–π —Ä–µ–µ—Å—Ç—Ä: ");
+		do {
+			_sudReestr = takeString(sock);
+			if (Checks::checkNoNumbers(_sudReestr)) {
+				break;
+			}
+			else
+				sendString(sock, "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n–°—É–¥–µ–±–Ω—ã–π —Ä–µ–µ—Å—Ç—Ä: ");
+		} while (true);*/
+
+		sendString(sock, "end");
+
+		size_t ch;
+		sendString(sock, "menu");
+		sendString(sock, "–°—É–¥–µ–±–Ω—ã–π —Ä–µ–µ—Å—Ç—Ä:#–ù–µ—Ç#–î–∞");
+		ch = takeInt(sock);
+		if (ch > 0) {
+			switch (ch) {
+			case 1:
+				_sudReestr = "–ù–µ—Ç";
+				break;
+			case 2:
+				_sudReestr = "–î–∞";
+				break;
+			default:
+				break;
+			}
+		}
+		else return;
+		//sendString(sock, "–î–∞—Ç–∞ –ø–æ–¥–∞—á–∏ –∑–∞—è–≤–∫–∏: ");
+		//_applicationDate.inputDate();
+		_applicationDate.setDateStr(_applicationDate.currentDate()); //std::string
+
+		/*sendString(sock, "–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ –∫–æ–º–ø–∞–Ω–∏–∏: ");
+		do {
+			_companyIdStr = takeString(sock);
+			if (Checks::checkNoNumbers(_companyIdStr)) {
+				_companyId = stol(_companyIdStr);
+				break;
+			}
+			else
+				sendString(sock, "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥. –ü–æ–≤—Ç–æ—Ä–∏—Ç–µ –ø–æ–ø—ã—Ç–∫—É.\n–ù–∞–∏–º–µ–Ω–æ–≤–∞–Ω–∏–µ –∫–æ–º–ø–∞–Ω–∏–∏: ");
+		} while (true);*/
+		//sendString(sock, "end");
+
+		//size_t ch = vcChoice("–ö–æ–º–ø–∞–Ω–∏—è", Companies);
+		//size_t ch;
+		sendString(sock, "menu");
+		sendString(sock, toString(Companies));
+		ch = takeInt(sock);
+		if (ch > 0) _companyId = ch - 1;
+		else return;
+		setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const ProjectSock& project) {
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		os << " project_id: " << project.getProjectId() << endl;
+		os << " project_name: " << project.getProjectName() << endl;
+		os << " sum_credit: " << project.getSumCredit() << endl;
+		os << " credit_time: " << project.getCreditTime() << endl;
+		os << " sud_reestr: " << project.getSudReestr() << endl;
+		os << " application_date: " << project.getApplicationDate().getDateStr() << endl;
+		os << " company_id: " << project.getCompanyId() << endl;
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		return os;
+	}
 };
 
 

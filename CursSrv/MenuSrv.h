@@ -1,668 +1,764 @@
-#ifndef CURSCLN_MENUSRV_H
+п»ї#ifndef CURSCLN_MENUSRV_H
 #define CURSCLN_MENUSRV_H
 
 #include "..\Utils\stdafx.h"
 #include "User.h"
 #include "Company.h"
+#include "DBWork.h"
+
 
 using namespace std;
 
 class A_menu {
 private:
-    SOCKET sock;
+	SOCKET sock;
+	DBWork db;
+	tUser userC;
 public:
-    //static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
-    //All_info ai;
-    std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
-    std::string strMenuAdmin = "\tАдминистратор#Просмотр инвестиционных проектов#Добавление#Удаление#Сохранение информации в бд#Поиск#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Вывести результат ранжирования ИП#Редактировать#Выход";
-    std::string strMenuAdminAdd = "Вы хотите добавить: #Новые компании#Новых экспертов#Новые проекты#Назад";
-    std::string strMenuAdminDel = "Вы хотите удалить: #Компанию#Экспертов#Проекты#Назад";
-    std::string strMenuAdminSave = "Вы хотите сохранить информацию о:#Компании#Экспертах#Проектах#Назад";
-    std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Составить порядок предпочтений#Назад";
-    std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Компании#Экспертов#Проектов#Назад";
-    std::string strMenuCompany = "\tКомпания#Ввод данных#Редактировать данные#Добавить проект#Сохранение информации в бд#Удаление данных о проекте#Выход";
-    std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
-    std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
-    std::string strMenuExpert = "\tЭксперт#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
+	//static vector<std::string> vcMainMenu = {"Р›РѕРіРёРЅ", "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "Р’С‹С…РѕРґ"};
+	//All_info ai;
+	std::string strMenuMain = "-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-#Р›РѕРіРёРЅ#Р РµРіРёСЃС‚СЂР°С†РёСЏ#Р›РѕРіР°СѓС‚#Р’С‹С…РѕРґ";
+	std::string strMenuAdmin = "\tРђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ#РџСЂРѕСЃРјРѕС‚СЂ РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹С… РїСЂРѕРµРєС‚РѕРІ#Р”РѕР±Р°РІР»РµРЅРёРµ#РЈРґР°Р»РµРЅРёРµ#РЎРѕС…СЂР°РЅРµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё РІ Р±Рґ#РџРѕРёСЃРє#РЎРѕСЂС‚РёСЂРѕРІРєР° РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹С… РїСЂРѕРµРєС‚РѕРІ#Р Р°РЅР¶РёСЂРѕРІР°С‚СЊ РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹Рµ РїСЂРѕРµРєС‚С‹#Р’С‹РІРµСЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°РЅР¶РёСЂРѕРІР°РЅРёСЏ РРџ#Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ#Р’С‹С…РѕРґ";
+	std::string strMenuAdminAdd = "Р’С‹ С…РѕС‚РёС‚Рµ РґРѕР±Р°РІРёС‚СЊ: #РќРѕРІС‹Рµ РєРѕРјРїР°РЅРёРё#РќРѕРІС‹С… СЌРєСЃРїРµСЂС‚РѕРІ#РќРѕРІС‹Рµ РїСЂРѕРµРєС‚С‹#РќР°Р·Р°Рґ";
+	std::string strMenuAdminDel = "Р’С‹ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ: #РљРѕРјРїР°РЅРёСЋ#Р­РєСЃРїРµСЂС‚РѕРІ#РџСЂРѕРµРєС‚С‹#РќР°Р·Р°Рґ";
+	std::string strMenuAdminSave = "Р’С‹ С…РѕС‚РёС‚Рµ СЃРѕС…СЂР°РЅРёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ:#РљРѕРјРїР°РЅРёРё#Р­РєСЃРїРµСЂС‚Р°С…#РџСЂРѕРµРєС‚Р°С…#РќР°Р·Р°Рґ";
+	std::string strMenuAdminRanking = "Р Р°РЅР¶РёСЂРѕРІР°С‚СЊ РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹Рµ РїСЂРѕРµРєС‚С‹:#РћСЃСѓС‰РµСЃС‚РІРёС‚СЊ РїРѕРїР°СЂРЅРѕРµ СЃСЂР°РІРЅРµРЅРёРµ РїСЂРѕРµРєС‚РѕРІ#РќР°Р№С‚Рё РѕС†РµРЅРєРё#Р’С‹С‡РёСЃР»РёС‚СЊ РІРµСЃР° РїСЂРѕРµРєС‚РѕРІ#РЎРѕСЃС‚Р°РІРёС‚СЊ РїРѕСЂСЏРґРѕРє РїСЂРµРґРїРѕС‡С‚РµРЅРёР№#РќР°Р·Р°Рґ";
+	std::string strMenuAdminEdit = "Р’С‹ С…РѕС‚РёС‚Рµ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ:#РљРѕРјРїР°РЅРёРё#Р­РєСЃРїРµСЂС‚РѕРІ#РџСЂРѕРµРєС‚РѕРІ#РќР°Р·Р°Рґ";
+	std::string strMenuCompany = "\tРљРѕРјРїР°РЅРёСЏ#Р’РІРѕРґ РґР°РЅРЅС‹С…#Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ#Р”РѕР±Р°РІРёС‚СЊ РїСЂРѕРµРєС‚#РЎРѕС…СЂР°РЅРµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё РІ Р±Рґ#РЈРґР°Р»РµРЅРёРµ РґР°РЅРЅС‹С… Рѕ РїСЂРѕРµРєС‚Рµ#Р’С‹С…РѕРґ";
+	std::string strMenuCompanyEdit = "Р’С‹ С…РѕС‚РёС‚Рµ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ:#РљРѕРјРїР°РЅРёРё#РџСЂРѕРµРєС‚РѕРІ#РќР°Р·Р°Рґ";
+	std::string strMenuCompanySave = "Р’С‹ С…РѕС‚РёС‚Рµ СЃРѕС…СЂР°РЅРёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ:#РљРѕРјРїР°РЅРёРё#РџСЂРѕРµРєС‚Р°С…#РќР°Р·Р°Рґ";
+	std::string strMenuExpert = "\tР­РєСЃРїРµСЂС‚#Р’С‹СЃС‚Р°РІР»РµРЅРёРµ РѕС†РµРЅРѕРє#Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ Рѕ СЃРµР±Рµ#РџСЂРѕСЃРјРѕС‚СЂРµС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РѕР± РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹С… РїСЂРѕРµРєС‚Р°С…#Р’С‹С…РѕРґ";
 
-    // Конструктор
-    A_menu() {
-        sock = NULL;
-    };
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+	A_menu() {
+		sock = NULL;
+	};
 
-    explicit A_menu(SOCKET connection) {
-        sock = connection;
-    }
+	explicit A_menu(SOCKET connection) {
+		sock = connection;
+		//db.connect("tcp://10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+	}
 
-    // Деструктор
-    ~A_menu() = default;
+	// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
+	~A_menu() = default;
 
-    static int changeMenu(const std::string &str, int cntMenu, const std::string &begMenu, int back) {
-        int choice = -1;
-        std::string endMenu = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-";
-        cout << endl << begMenu << endl;
-        cout << str << endl;
-        if (back == 0) cout << " 0 - Выход" << endl;
-        else cout << " 0 - Назад" << endl;
-        cout << endMenu.substr(0, begMenu.size()) << endl;
-        cout << "Выберите: ";
-        do {
-            Checks::CheckInput(choice);
-            if ((choice > cntMenu) || (choice < 0)) {
-                cout << "Такого варианта нет в меню, попробуйте снова" << endl;
-            }
-        } while ((choice < 0) || (choice > cntMenu));
-        std::cin.clear();
-        return choice;
-    }
+	static int changeMenu(const std::string& str, int cntMenu, const std::string& begMenu, int back) {
+		int choice = -1;
+		std::string endMenu = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-";
+		cout << endl << begMenu << endl;
+		cout << str << endl;
+		if (back == 0) cout << " 0 - Р’С‹С…РѕРґ" << endl;
+		else cout << " 0 - РќР°Р·Р°Рґ" << endl;
+		cout << endMenu.substr(0, begMenu.size()) << endl;
+		cout << "Р’С‹Р±РµСЂРёС‚Рµ: ";
+		do {
+			Checks::CheckInput(choice);
+			if ((choice > cntMenu) || (choice < 0)) {
+				cout << "РўР°РєРѕРіРѕ РІР°СЂРёР°РЅС‚Р° РЅРµС‚ РІ РјРµРЅСЋ, РїРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°" << endl;
+			}
+		} while ((choice < 0) || (choice > cntMenu));
+		std::cin.clear();
+		return choice;
+	}
 
-    static size_t choiceMenu(size_t cntMenu, const std::string &strMenu) {
-        cout << " 0 - --= ОТМЕНА =-- " << endl;
-        cout << "Выберите " << strMenu << ": ";
-        size_t ch = -1;
-        do {
-            std::cin >> ch;
-            fflush(stdin);
-        } while ((ch < 0) || (ch > cntMenu));
-        return ch;
-    }
+	static size_t choiceMenu(size_t cntMenu, const std::string& strMenu) {
+		cout << " 0 - --= РћРўРњР•РќРђ =-- " << endl;
+		cout << "Р’С‹Р±РµСЂРёС‚Рµ " << strMenu << ": ";
+		size_t ch = -1;
+		do {
+			std::cin >> ch;
+			fflush(stdin);
+		} while ((ch < 0) || (ch > cntMenu));
+		return ch;
+	}
 
-    static bool Confirm(const std::string &msg) {
-        //        int ls;
-        //        cout << msg << " (Y/Д/[N/Н]): ";
-        //        do {
-        //            ls = cin.get();
-        //        } while (((ls != 'Y') && (ls != 'y') && (ls != 'N') && (ls != 'n') && (ls != 'Д') && (ls != 'д') &&
-        //                  (ls != 'Н') && (ls != '')) || (ls == 13));
-        //        if ((ls == 'Y') || (ls == 'y') || (ls == 'Д') || (ls == 'д')) return true;
-        //        else if ((ls == 'N') || (ls == 'n') || (ls == 'Н') || (ls == 'н') || (ls == 13)) return false;
-        //        else return false;
-        return true;
-    }
+	static bool Confirm(const std::string& msg) {
+		//        int ls;
+		//        cout << msg << " (Y/Р”/[N/Рќ]): ";
+		//        do {
+		//            ls = cin.get();
+		//        } while (((ls != 'Y') && (ls != 'y') && (ls != 'N') && (ls != 'n') && (ls != 'Р”') && (ls != 'Рґ') &&
+		//                  (ls != 'Рќ') && (ls != '')) || (ls == 13));
+		//        if ((ls == 'Y') || (ls == 'y') || (ls == 'Р”') || (ls == 'Рґ')) return true;
+		//        else if ((ls == 'N') || (ls == 'n') || (ls == 'Рќ') || (ls == 'РЅ') || (ls == 13)) return false;
+		//        else return false;
+		return true;
+	}
 
-    static int menuMain() {
-        std::string strMenu = " 1 - Логин\n 2 - Регистрация";
-        return changeMenu(strMenu, 6, "-=-=-=-=  М е н ю  =-=-=-=-", 0);
-        //        return vcChoice("-=-=-=-=  М е н ю  =-=-=-=-", vcMainMenu, 0)
-    }
+	static int menuMain() {
+		std::string strMenu = " 1 - Р›РѕРіРёРЅ\n 2 - Р РµРіРёСЃС‚СЂР°С†РёСЏ";
+		return changeMenu(strMenu, 6, "-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-", 0);
+		//        return vcChoice("-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-", vcMainMenu, 0)
+	}
 
-    void menuAdmin() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuAdmin);
-        //sendMenu(sock, split(strMenuAdmin));
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        std::string command;
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            size_t i = atoi(p);
-            std::cout << "<- " << split(strMenuAdmin)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    menuAdminAdd();
-                    break;
-                case 3:
-                    menuAdminDel();
-                    break;
-                case 4:
-                    menuAdminSave();
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    menuAdminRanking();
-                    break;
-                case 8:
-                    break;
-                case 9:
-                    menuAdminEdit();
-                    break;
-                case 10:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuMain);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuAdmin);
-        }
-    }
+	void menuAdmin() {
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdmin);
+		//sendMenu(sock, split(strMenuAdmin));
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		std::string command;
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			size_t i = atoi(p);
+			std::cout << "<- " << split(strMenuAdmin)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				menuAdminAdd();
+				break;
+			case 3:
+				menuAdminDel();
+				break;
+			case 4:
+				menuAdminSave();
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				menuAdminRanking();
+				break;
+			case 8:
+				break;
+			case 9:
+				menuAdminEdit();
+				break;
+			case 10:
+				sendString(sock, "menu");
+				sendString(sock, strMenuMain);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdmin);
+		}
+	}
 
-    void menuAdminAdd() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuAdminAdd);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuAdminAdd)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuAdmin);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuAdminAdd);
-        }
-    }
+	void menuAdminAdd() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdminAdd);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuAdminAdd)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				sendString(sock, "menu");
+				sendString(sock, strMenuAdmin);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdminAdd);
+		}
+	}
 
-    void menuAdminDel() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuAdminDel);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuAdminDel)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuAdmin);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuAdminDel);
-        }
-    }
+	void menuAdminDel() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdminDel);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuAdminDel)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				sendString(sock, "menu");
+				sendString(sock, strMenuAdmin);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdminDel);
+		}
+	}
 
-    void menuAdminSave() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuAdminSave);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuAdminSave)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuAdmin);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuAdminSave);
-        }
-    }
+	void menuAdminSave() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdminSave);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuAdminSave)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				sendString(sock, "menu");
+				sendString(sock, strMenuAdmin);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdminSave);
+		}
+	}
 
-    void menuAdminRanking() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuAdminRanking);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuAdminRanking)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuAdmin);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuAdminRanking);
-        }
-    }
+	void menuAdminRanking() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdminRanking);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuAdminRanking)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				sendString(sock, "menu");
+				sendString(sock, strMenuAdmin);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdminRanking);
+		}
+	}
 
-    void menuAdminEdit() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuAdminEdit);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuAdminEdit)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuAdmin);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuAdminEdit);
-        }
-    }
+	void menuAdminEdit() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdminEdit);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuAdminEdit)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				sendString(sock, "menu");
+				sendString(sock, strMenuAdmin);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdminEdit);
+		}
+	}
 
-    void menuCompany() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuCompany);
-        //sendMenu(sock, split(strMenuAdmin));
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        std::string command;
-        int c = -1;
-        while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuCompany)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    menuCompanyEdit();
-                    break;
-                case 3:
-                    //menuCompanyEdit();
-                    break;
-                case 4:
-                    menuCompanySave();
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuMain);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuCompany);
-        }
-    }
+	void menuCompany() {
+		sendString(sock, "menu");
+		sendString(sock, strMenuCompany);
+		//sendMenu(sock, split(strMenuAdmin));
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		std::string command;
+		int c = -1;
+		while (c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuCompany)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				menuCompanyEdit();
+				break;
+			case 3:
+				//menuCompanyEdit();
+				break;
+			case 4:
+				menuCompanySave();
+				break;
+			case 5:
+				break;
+			case 6:
+				sendString(sock, "menu");
+				sendString(sock, strMenuMain);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuCompany);
+		}
+	}
 
-    void menuCompanyEdit() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuCompanyEdit);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuCompanyEdit)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuCompany);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuCompanyEdit);
-        }
-    }
+	void menuCompanyEdit() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuCompanyEdit);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuCompanyEdit)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				sendString(sock, "menu");
+				sendString(sock, strMenuCompany);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuCompanyEdit);
+		}
+	}
 
-    void menuCompanySave() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuCompanySave);
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuCompanySave)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuCompany);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuCompanySave);
-        }
-    }
+	void menuCompanySave() {
+		sendString(sock, "menu");
+		sendString(sock, strMenuCompanySave);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuCompanySave)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				sendString(sock, "menu");
+				sendString(sock, strMenuCompany);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuCompanySave);
+		}
+	}
 
-    void menuExpert() {
-        sendString(sock, "menu");
-        sendString(sock, strMenuExpert);
-        //sendMenu(sock, split(strMenuExpert));
-        char p[200];
-        strcpy(p, "");
-        p[0] = '\0';
-        std::string command;
-        int c = -1;
-        while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            int i = atoi(p);
-            std::cout << "<- " << split(strMenuExpert)[i] << endl;
-            switch (i) {
-                case 1:
-                    break;
-                case 2:
-                    //menuAdminAdd();
-                    break;
-                case 3:
-                    //menuCompanyEdit();
-                    break;
-                case 4:
-                    sendString(sock, "menu");
-                    sendString(sock, strMenuMain);
-                    return;
-            }
-            sendString(sock, "menu");
-            sendString(sock, strMenuExpert);
-        }
-    }
+	void menuExpert() const {
+		sendString(sock, "menu");
+		sendString(sock, strMenuExpert);
+		//sendMenu(sock, split(strMenuExpert));
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		std::string command;
+		int c = -1;
+		while (c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuExpert)[i] << endl;
+			switch (i) {
+			case 1:
+				break;
+			case 2:
+				//menuAdminAdd();
+				break;
+			case 3:
+				//menuCompanyEdit();
+				break;
+			case 4:
+				sendString(sock, "menu");
+				sendString(sock, strMenuMain);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuExpert);
+		}
+	}
 
-    void start() {
-        int c;
-        char p[200], com[200];//основной буфер и команда
-        char curU[20];
-        curU[0] = '\0';
-        com[0] = '\0';
-        p[0] = '\0';
-        std::cout << "Соединение установлено." << std::endl;
-        char *message = new char[100];
-        strcat(p, "Server connected...\n");
-        //send((SOCKET)newS, p, sizeof(p), 0);//посылаем приветствие при соединении
-        std::string strMenu = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
-        sendString(sock, "Server connected...\n");
-        sendString(sock, "menu");
-        sendString(sock, strMenu);
-        strcpy(p, "");
-        p[0] = '\0';
-        std::string command;
-        while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-            command = p;
-            //std::cout << "<- " << com << std::endl;
-            int i = atoi(command.c_str());
-            if (command == "1") {//подключение пользователя
+	//----- Р’РІРѕРґ РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ -----
+	void addUser(int flag = 2) {
+		//UserSock user(sock, db.getRoles());
+		UserSock user(sock, db.getGuide("user_role", 1, flag)); //, 2); // РґР»СЏ РІС‹РІРѕРґР° РєСЂРѕРјРµ Р°РґРјРёРЅР° (СЂРµРіРёСЃС‚СЂР°С†РёСЏ)
+		user.enterUser();
+		std::cout << user;
+		db.addUser(user);
+		std::cout << "---- Р”РѕР±Р°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ ----" << std::endl;
+		std::cout << user;
+		db.deleteUser(user.getUid());
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+
+	//-------- РЎРїРёСЃРѕРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ ---------
+	int listUsers(vector<std::string>& vc, int flag = 0) {	// 0 - Р’СЃРµ
+		int ch = 0;											// 1 - Р­РєСЃРїРµСЂС‚С‹
+		if (!vc.empty()) vc.clear();						// 2 - РќРµ РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂС‹
+		vc = db.getGuide("user", 2, flag);
+		sendString(sock, "menu0");
+		sendString(sock, toString(vc, "Р’С‹Р±РµСЂРёС‚Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: "));
+		ch = takeInt(sock);
+		return ch;
+	}
+
+	//----- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ -----
+	void editUser() {
+		vector<std::string> users;
+		User oldUser;
+		int ch = listUsers(users, 0);
+		if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+		else {
+			std::cout << "- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РѕС‚РјРµРЅРµРЅРѕ -" << std::endl;
+			return;
+		}
+		UserSock user(sock, db.getGuide("user_role", 1));
+		user.enterUser();
+		user.setUid(oldUser.getUid());
+		db.editUser(user, oldUser.getUid());
+		std::cout << "-- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ --" << std::endl;
+		std::cout << oldUser;
+		std::cout << "---------------------------------" << std::endl;
+		std::cout << user;
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//----- РЈРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ -----
+	void deleteUser() {
+		vector<std::string> users;
+		User oldUser;
+		int ch = listUsers(users, 0);
+		if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+		else {
+			std::cout << "- РЈРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РѕС‚РјРµРЅРµРЅРѕ -" << std::endl;
+			return;
+		}
+		std::cout << "----- РЈРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ -----" << std::endl;
+		std::cout << oldUser;
+		db.deleteUser(oldUser.getUid());
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//--------- Р’РІРѕРґ РЅРѕРІРѕР№ РєРѕРјРїР°РЅРёРё ---------
+	void addCompany() {
+		CompanySock cmp(sock);
+		cmp.enterCompany();
+		db.addCompany(cmp);
+		std::cout << "------ Р”РѕР±Р°РІР»РµРЅРёРµ РєРѕРјРїР°РЅРёРё ------" << std::endl;
+		std::cout << cmp;
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//----------- РЎРїРёСЃРѕРє РєРѕРјРїР°РЅРёР№ -----------
+	int listCompany(vector<string>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuide("company", 2);
+		sendString(sock, "menu0");
+		sendString(sock, toString(vc, "Р’С‹Р±РµСЂРёС‚Рµ РєРѕРјРїР°РЅРёСЋ: "));
+		ch = takeInt(sock);
+		return ch;
+	}
+
+	//------- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё -------
+	void editCompany() {
+		vector<std::string> companies;
+		Company oldCompany;
+		int ch = listCompany(companies);
+		if (ch != 0) oldCompany = db.getCompany("company_name", companies[ch - 1]);
+		else {
+			std::cout << "-- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё РѕС‚РјРµРЅРµРЅРѕ --" << std::endl;
+			return;
+		}
+		std::cout << "------- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё -------" << std::endl;
+		std::cout << oldCompany;
+		std::cout << "---------------------------------" << std::endl;
+		CompanySock newCompany(sock);
+		newCompany.enterCompany();
+		newCompany.setId(oldCompany.getId());
+		db.editCompany(newCompany, oldCompany.getId());
+		std::cout << newCompany;
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//---------- РЈРґР°Р»РµРЅРёРµ РєРѕРјРїР°РЅРёРё ----------
+	void deleteCompany() {
+		vector<std::string> companies;
+		Company oldCompany;
+		int ch = listCompany(companies);
+		if (ch != 0) oldCompany = db.getCompany("company_name", companies[ch - 1]);
+		else {
+			std::cout << "--- РЈРґР°Р»РµРЅРёРµ РєРѕРјРїР°РЅРёРё РѕС‚РјРµРЅРµРЅРѕ ---" << std::endl;
+			return;
+		}
+		std::cout << "------- РЈРґР°Р»РµРЅРёРµ РєРѕРјРїР°РЅРёРё -------" << std::endl;
+		std::cout << oldCompany;
+		db.deleteCompany(oldCompany.getId());
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//--------- Р’РІРѕРґ РЅРѕРІРѕРіРѕ РїСЂРѕРµРєС‚Р° ---------
+	void addProject() {
+		ProjectSock project(sock, db.getGuide("company", 2));
+		project.enterProject();
+		project.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
+		std::cout << project;
+		db.addProject(project);
+		std::cout << "--------- Р’РІРѕРґ РЅРѕРІРѕРіРѕ РїСЂРѕРµРєС‚Р° ---------" << std::endl;
+		std::cout << project;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+
+	//------- РЎРїРёСЃРѕРє РїСЂРѕРµРєС‚РѕРІ vector --------
+	size_t listProject(vector<string>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuide("project", 2);
+		sendString(sock, "menu0");
+		sendString(sock, toString(vc, "Р’С‹Р±РµСЂРёС‚Рµ РїСЂРѕРµРєС‚: "));
+		ch = takeInt(sock);
+		return ch;
+	}
+
+	//--------- РЎРїРёСЃРѕРє РїСЂРѕРµРєС‚РѕРІ map ---------
+	size_t listProject(map<string, size_t>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuideMap("project", 2);
+		vector<string> tmp = toVector(vc);
+		sendString(sock, "menu0");
+		sendString(sock, toString(tmp, "Р’С‹Р±РµСЂРёС‚Рµ РїСЂРѕРµРєС‚: "));
+		ch = takeInt(sock);
+		if (ch != 0) {
+			//ch = vc[tmp[ch]];
+			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			ch = vc[tmp[ch - 1]];
+		}
+		return ch;
+	}
+
+	//-------- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїСЂРѕРµРєС‚Р°--------
+	void editProject() {
+		vector<std::string> projects;
+		Project oldProject;
+		int ch = listProject(projects);
+		if (ch != 0)
+			oldProject = db.getProject("project_name", projects[ch - 1]);
+		else {
+			std::cout << "--- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїСЂРѕРµРєС‚Р° РѕС‚РјРµРЅРµРЅРѕ ---" << std::endl;
+			return;
+		}
+		ProjectSock newProject(sock, db.getGuide("company", 2));
+		std::cout << "-------- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїСЂРѕРµРєС‚Р°--------" << std::endl;
+		std::cout << oldProject;
+		std::cout << "---------------------------------------" << std::endl;
+		newProject.enterProject();
+		newProject.setProjectId(oldProject.getProjectId());
+		newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
+		db.editProject(newProject, oldProject.getProjectId());
+		std::cout << newProject;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+
+	//----------- РЈРґР°Р»РµРЅРёРµ РїСЂРѕРµРєС‚Р°-----------
+	void deleteProject() {
+		vector<std::string> projects;
+		Project oldProject;
+		size_t ch = listProject(projects);
+		if (ch != 0) oldProject = db.getProject("project_name", projects[ch - 1]);
+		else {
+			std::cout << "------ РЈРґР°Р»РµРЅРёРµ РїСЂРѕРµРєС‚Р° РѕС‚РјРµРЅРµРЅРѕ ------" << std::endl;
+			return;
+		}
+		std::cout << "----------- РЈРґР°Р»РµРЅРёРµ РїСЂРѕРµРєС‚Р°-----------" << std::endl;
+		std::cout << oldProject;
+		std::cout << "---------------------------------------" << std::endl;
+		db.deleteProject(oldProject.getProjectId());
+	}
+	
+	//---------- Р’РІРѕРґ РЅРѕРІРѕР№ РѕС†РµРЅРєРё ----------
+	void addMark() {
+		MarkSock mark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		mark.enterMark();
+		//mark.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
+		std::cout << mark;
+		db.addMark(mark);
+		std::cout << "---------- Р’РІРѕРґ РЅРѕРІРѕР№ РѕС†РµРЅРєРё ----------" << std::endl;
+		std::cout << mark;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+	
+	//--------- РЎРїРёСЃРѕРє РѕС†РµРЅРѕРє map ---------
+	size_t listMark(map<string, size_t>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuideMap("mark", 2);
+		vector<string> tmp = toVector(vc);
+		sendString(sock, "menu0");
+		sendString(sock, toString(tmp, "Р’С‹Р±РµСЂРёС‚Рµ РѕС†РµРЅРєСѓ: "));
+		ch = takeInt(sock);
+		if (ch != 0) {
+			//ch = vc[tmp[ch]];
+			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			ch = vc[tmp[ch - 1]];
+		}
+		return ch;
+	}
+	
+	//-------- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РѕС†РµРЅРєРё --------
+	void editMark() {
+		std::map<std::string, size_t> marks;
+		Mark oldMark;
+		size_t ch = listMark(marks);
+		if (ch != 0) oldMark = db.getMark("mark_id", ch);
+		else {
+			std::cout << "---- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РѕС†РµРЅРєРё РѕС‚РјРµРЅРµРЅРѕ ---" << std::endl;
+			return;
+		}
+		std::cout << "-------- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РѕС†РµРЅРєРё --------" << std::endl;
+		std::cout << oldMark;
+		std::cout << "---------------------------------------" << std::endl;
+		MarkSock newMark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		newMark.enterMark();
+		newMark.setMarKId(oldMark.getMarkId());
+		//newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
+		//db.editProject(newProject, oldProject.getProjectId());
+		db.editMark(newMark, newMark.getMarkId());
+		std::cout << newMark;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+	
+	//----------- РЈРґР°Р»РµРЅРёРµ РѕС†РµРЅРєРё -----------
+	void deleteMark() {
+		std::map<std::string, size_t> marks;
+		Mark oldMark;
+		size_t ch = listMark(marks);
+		if (ch != 0) oldMark = db.getMark("mark_id", ch);
+		else {
+			std::cout << "------ РЈРґР°Р»РµРЅРёРµ РѕС†РµРЅРєРё РѕС‚РјРµРЅРµРЅРѕ -------" << std::endl;
+			return;
+		}
+		std::cout << "----------- РЈРґР°Р»РµРЅРёРµ РѕС†РµРЅРєРё -----------" << std::endl;
+		std::cout << oldMark;
+		std::cout << "---------------------------------------" << std::endl;
+		db.deleteMark(oldMark.getMarkId());
+	}
+
+
+	void start() {
+		int c;
+		char p[200], com[200];//РѕСЃРЅРѕРІРЅРѕР№ Р±СѓС„РµСЂ Рё РєРѕРјР°РЅРґР°
+		char curU[20];
+		curU[0] = '\0';
+		com[0] = '\0';
+		p[0] = '\0';
+		std::cout << "РЎРѕРµРґРёРЅРµРЅРёРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ." << std::endl;
+		char* message = new char[100];
+		strcat(p, "Server connected...\n");
+		//send((SOCKET)newS, p, sizeof(p), 0);//РїРѕСЃС‹Р»Р°РµРј РїСЂРёРІРµС‚СЃС‚РІРёРµ РїСЂРё СЃРѕРµРґРёРЅРµРЅРёРё
+		std::string strMenu = "-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-#Р›РѕРіРёРЅ#Р РµРіРёСЃС‚СЂР°С†РёСЏ#Р›РѕРіР°СѓС‚#Р’С‹С…РѕРґ";
+		Date tmpDate{};
+		tmpDate.setDateStr("2022/05/06");
+		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
+		sendString(sock, "menu");
+		sendString(sock, strMenu);
+		strcpy(p, "");
+		p[0] = '\0';
+		std::string command;
+		while (c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
+			command = p;
+			//std::cout << "<- " << com << std::endl;
+			int i = atoi(command.c_str());
+			User oldUser;
+			vector<std::string> users;
+			std::map<std::string, size_t> userS;
+			size_t ch;
+			UserSock user(sock, db.getGuide("user_role", 1));
+			CompanySock cmp(sock);
+			ProjectSock project(sock, db.getGuide("company", 2));
+			switch (i) {
+			case 1:
+				//РџРѕРґРєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+
+				sendString(sock, "data");
+				sendString(sock, "Р›РѕРіРёРЅ: ");
+				userC.login = takeString(sock);
+				// РёС‰РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р±Р°Р·Рµ
+				oldUser = db.getUser("login", userC.login);
+				// РµСЃР»Рё РЅР°С…РѕРґРёРј
+				sendString(sock, "РџР°СЂРѕР»СЊ: ");
+				userC.pass = takeString(sock);
+				sendString(sock, "end");
+				if (userC.pass == oldUser.getPass()) {
+					userC.Role = oldUser.getRole();
+					std::cout << "login: " << userC.login << " - " << userC.pass << " - " << userC.Role << endl;
+					if (oldUser.getRole() == "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ") menuAdmin();
+					else if (oldUser.getRole() == "Р­РєСЃРїРµСЂС‚") menuExpert();
+					else menuCompany();
+				}
+				else {
+					sendString(sock, "menu");
+					sendString(sock, strMenu);
+				}
+				//                std::cout << "login: " << user.login << " - " << user.pass << endl;
+				//if user = Admin
+				menuAdmin();
+				//menuCompany();
+				break;
+			case 2:
+				//РїРѕРґРєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 //                tUser user{};
 //                sendString(sock, "data");
-//                sendString(sock, "Введите логин: ");
+//                sendString(sock, "Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ: ");
 //                user.login = takeString(sock);
-//                // ищем пользователя в базе
-//                // если находим
-//                sendString(sock, "Введите пароль: ");
-//                user.pass = takeString(sock);
-//                sendString(sock, "end");
-//                std::cout << "login: " << user.login << " - " << user.pass << endl;
-                //if user = Admin
-                //menuAdmin();
-                menuCompany();
-            }
-            if (command == "2") {//подключение пользователя
-//                tUser user{};
-//                sendString(sock, "data");
-//                sendString(sock, "Введите логин: ");
-//                user.login = takeString(sock);
-//                // ищем пользователя в базе
-//                // если находим
-//                sendString(sock, "Введите пароль: ");
+//                // РёС‰РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р±Р°Р·Рµ
+//                // РµСЃР»Рё РЅР°С…РѕРґРёРј
+//                sendString(sock, "Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ: ");
 //                user.pass = takeString(sock);
 //                sendString(sock, "end");
 //                std::cout << "register: " << user.login << " - " << user.pass << endl;
 //
 //                menuExpert();
-                UserSock user(sock);
-                user.enterUser();
-                std::cout << user;
-                menuAdmin();
-            }
-            if (command == "3") {//отключение пользователя
-                //cout << "User " << curU << " logout" << endl;
-                sendString(sock, "exit");
-                closesocket(sock);//закрываем сокет
-                return;
-            }
-            if (command == "4") {//выход
-                sendString(sock, "exit");
-                closesocket(sock);//закрываем сокет
-                exit(EXIT_SUCCESS);
-            }
-        }
-    }
+				//
 
-    //    // Просмотр информации (case 1)
-    //    void view_info() {
-    //        int v;
-    //        while (true) {
-    //            system("cls");
-    //            v = menuView();
-    //            switch (v) {
-    //                case 1: {
-    //                    system("cls");
-    //                    ai.printHos();
-    //                    system("pause");
-    //                    break;
-    //                }
-    //                case 2: {
-    //                    system("cls");
-    //                    std::cout << "Попытка сохранить данные в файл... Ожидайте!" << endl;
-    //                    ofstream fout;
-    //                    fout.exceptions(ofstream::badbit);
-    //                    try {
-    //                        fout.open("lab5.txt");
-    //                        //else fout.open("lab5.txt", ios::app | ios_base::in);
-    //                        ai.printHos(fout);
-    //                        cout << "Данные сохранены успешно!" << endl;
-    //                    }
-    //                    catch (const ofstream::failure &e) {
-    //                        cout << "Ошибка открытия файла (lab5.txt)!" << endl;
-    //                    }
-    //                    fout.close();
-    //                    system("pause");
-    //                    break;
-    //                }
-    //                case 0:
-    //                    return;
-    //                default:
-    //                    cout << "Такого действия нет. Введите другой выбор.\n";
-    //                    break;
-    //            }
-    //        }
-    //    }
-    //
-    //    // Добавление информации (case 2)
-    //    void add_info() {
-    //        int v;
-    //        while (true) {
-    //            system("cls");
-    //            v = menuAdd();
-    //            if (v != 0) {
-    //                ai.addMedic(Departs[v - 1]);
-    //            }
-    //            break;
-    //        }
-    //    }
-    //
-    //    // Редактирование информации (case 3)
-    //    void edit_info() {
-    //        std::string v;
-    //        while (true) {
-    //            system("cls");
-    //            v = menuEdit();
-    //            if (v.length() != 0) {
-    //                ai.editMedic(v);
-    //            }
-    //            break;
-    //        }
-    //    }
-    //
-    //    // Удаление информации (case 4)
-    //    void delete_info() {
-    //        int v;
-    //        while (true) {
-    //            system("cls");
-    //            v = menuDelete();
-    //            switch (v) {
-    //                case 1: {  //Удалить одного
-    //                    system("cls");
-    //                    ai.deleteMedic();
-    //                    system("pause");
-    //                    break;
-    //                }
-    //                case 2: {   //Удалить отделение
-    //                    system("cls");
-    //                    std::string vv = menuEdit();
-    //                    if (vv.length() != 0) {
-    //                        auto nameDepart = ai.Hospital.find(vv); // находим ячейку
-    //                        ai.Hospital.erase(nameDepart);
-    //                    }
-    //                    break;
-    //                }
-    //                case 3: {   //Удалить всех
-    //                    system("cls");
-    //                    ai.Hospital.clear();
-    //                    break;
-    //                }
-    //                case 0:
-    //                    return;
-    //                default:
-    //                    cout << "Такого действия нет. Введите другой выбор.\n";
-    //                    break;
-    //            }
-    //        }
-    //    }
-    //
-    //    // Поиск информации (case 5)
-    //    void search_info() {
-    //        while (true) {
-    //            int sw = menuSearch();
-    //            if (sw == 0) return;
-    //            else {
-    //                system("cls");
-    //                medicSearchMenu(sw);
-    //            }
-    //        }
-    //    }
-    //
-    //    void medicSearchMenu(size_t menuChoice) {
-    //        switch (menuChoice) {
-    //            case 1: {
-    //                system("cls");
-    //                list <Medic> result;
-    //                auto getSurname = []() -> string {
-    //                    std::string _n;
-    //                    std::cout << "Введите фамилию мед.работника: ";
-    //                    std::cin >> _n;
-    //                    return _n;
-    //                };
-    //                std::string strFind = getSurname();
-    //                result = ai.searchByName(strFind);
-    //                std::cout << "Ищем мед.работника: " << strFind << "." << endl;
-    //                if (result.empty()) {
-    //                    std::cout << "Совпадений не найдено\n";
-    //                } else {
-    //                    All_info::printHead();
-    //                    All_info::printList(result);
-    //                }
-    //                system("pause");
-    //                break;
-    //            }
-    //            case 2: {
-    //                system("cls");
-    //                list <Medic> result;
-    //                auto getPost = []() -> string {
-    //                    std::string position;
-    //                    int ch = vcChoice("должность", Posts);
-    //                    if (ch != 0) {
-    //                        position = Posts[ch - 1];
-    //                    } else {
-    //                        position = "";
-    //                    }
-    //                    return position;
-    //                };
-    //                std::string strFind = getPost();
-    //                result = ai.searchByPost(strFind);
-    //                std::cout << "Ищем должность: " << strFind << "." << endl;
-    //                if (result.empty()) {
-    //                    std::cout << "Совпадений не найдено\n";
-    //                } else {
-    //                    All_info::printHead();
-    //                    All_info::printList(result);
-    //                }
-    //                system("pause");
-    //                break;
-    //            }
-    //            case 3: {
-    //                system("cls");
-    //                list <Medic> result;
-    //                auto getKey = []() -> string {
-    //                    std::string key;
-    //                    int ch = vcChoice("отделение", Departs);
-    //                    if (ch != 0) {
-    //                        key = Departs[ch - 1];
-    //                    } else {
-    //                        key = "";
-    //                    }
-    //                    return key;
-    //                };
-    //                std::string strFind = getKey();
-    //                std::cout << "Ищем отделение: " << strFind << "." << endl;
-    //                auto it = ai.Hospital.find(strFind);
-    //                if (it != ai.Hospital.end()) {
-    //                    All_info::printHead();
-    //                    All_info::printList(it->second);
-    //                } else {
-    //                    std::cout << "Совпадений не найдено\n";
-    //                }
-    //                system("pause");
-    //                break;
-    //            }
-    //            default:
-    //                std::cout << "Некорректный выбор. Повторите попытку\n";
-    //                system("pause");
-    //                break;
-    //        }
-    //    }
-    //
-    //    // Сортировка информации (case 6)
-    //    void sorting(size_t mode) {
-    //        system("cls");
-    //        if (ai.Hospital.empty()) {
-    //            cout << "Список пуст.\n";
-    //            return;
-    //        }
-    //        for (auto &it: ai.Hospital) {
-    //            switch (mode) {
-    //                case 1:
-    //                    it.second.sort(compareSurname);
-    //                    break;
-    //                case 2:
-    //                    it.second.sort(compareSalary);
-    //                    break;
-    //                default:
-    //                    break;
-    //            }
-    //        }
-    //        ai.printHos();
-    //        system("pause");
-    //    }
+
+
+				/*ch = listProject(userS);
+				std::cout << ch;*/
+
+				deleteMark();
+
+
+
+				//menuAdmin();
+				break;
+			case 3:
+				//РѕС‚РєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+				//cout << "User " << curU << " logout" << endl;
+				sendString(sock, "exit");
+				closesocket(sock);//Р·Р°РєСЂС‹РІР°РµРј СЃРѕРєРµС‚
+				return;
+				//break;
+			case 4:
+				//РІС‹С…РѕРґ
+				sendString(sock, "exit");
+				closesocket(sock);//Р·Р°РєСЂС‹РІР°РµРј СЃРѕРєРµС‚
+				exit(EXIT_SUCCESS);
+				break;
+			default:
+				break;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenu);
+		}
+	}
 };
 
 #endif //CURSCLN_MENUSRV_H

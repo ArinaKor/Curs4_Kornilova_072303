@@ -12,67 +12,6 @@
 
 using namespace std;
 
-int registerUser(char* user, char* password) {
-	try {
-		fstream f("password", ios::out | ios::app);//открываем файл для записи в конец файла
-		if (!f.is_open()) return 0;
-		f << user << " " << password << endl;
-		f.close();
-		return 1;
-	}
-	catch (...) {//если исключение:
-		cerr << "Cannot open password file. Try again\n" << endl;
-		return 0;
-	}
-}
-
-int loginUser(char* user, char* password) {
-	char* log = new char[20];
-	char* oldPass = new char[20];
-	try {
-		ifstream f("password", ios::in);//открываем файл для чтения
-		if (!f.is_open()) return 0;
-		char* str = new char[255];
-		int i = 0, j = 0, n = 0;
-		while (!f.eof()) {
-			f.getline(str, 255, '\n');//читаем
-			for (int i = 0; str[i] != ' '; i++) {//откуда:
-				log[j] = str[i];
-				j++;
-			}
-			log[j] = '\0';
-			if (!strcmp(user, log)) {
-				for (int i = j + 1; ((str[i] != ' ') && (str[i] != '\0')); i++) {//откуда:
-					oldPass[n] = str[i];
-					n++;
-				}
-				oldPass[n] = '\0';
-				if (!strcmp(password, oldPass)) {
-					f.close();
-					return 2;
-				}
-				else {
-					f.close();
-					return 1;
-				}
-			}
-			log[0] = '\0';
-			j = 0;
-			cout << str << endl;
-		}
-		f.close();
-	}
-	catch (...) {//если исключение:
-		cerr << "Cannot open password file. Try again\n" << endl;
-		return 0;
-	}
-	return 0;
-}
-
-void login_menu() {}
-
-void register_menu() {}
-
 void Work(void* newS) {//поток обслуживания
 	A_menu menu((SOCKET)newS);
 	menu.start();
@@ -81,6 +20,7 @@ void Work(void* newS) {//поток обслуживания
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
+	//setlocale(LC_ALL, "1251");// utf - 8");//это на всякий случай
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
 	int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
