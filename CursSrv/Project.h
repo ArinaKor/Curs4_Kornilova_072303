@@ -20,6 +20,7 @@ private:
 	std::string sud_reestr;
 	Date application_date{};
 	size_t company_id;
+	float weight;
 public:
 	vector<string> Companies;
 
@@ -29,6 +30,7 @@ public:
 		credit_time = 0;
 		application_date = {};
 		company_id = 0;
+		weight = 0;
 	}
 
 	Project(vector<string> vc) {
@@ -38,6 +40,7 @@ public:
 		credit_time = 0;
 		application_date = {};
 		company_id = 0;
+		weight = 0;
 	}
 
 	Project(size_t _projectId, std::string _projectName, size_t _sumCredit, size_t _creditTime,
@@ -50,7 +53,9 @@ public:
 			std::move(_sudReestr)),
 		application_date(
 			_applicationDate),
-		company_id(_companyId) {}
+		company_id(_companyId) {
+		weight = 0;
+	}
 
 	size_t getProjectId() const {
 		return project_id;
@@ -78,6 +83,10 @@ public:
 
 	size_t getCompanyId() const {
 		return company_id;
+	}
+
+	float getWeight() const {
+		return weight;
 	}
 
 	void setProjectId(size_t _projectId) {
@@ -110,6 +119,10 @@ public:
 		company_id = _companyId;
 	}
 
+	void setWeight(float _weight) {
+		weight = _weight;
+	}
+
 	bool operator==(const Project& rhs) const {
 		return project_id == rhs.project_id &&
 			project_name == rhs.project_name &&
@@ -117,7 +130,8 @@ public:
 			credit_time == rhs.credit_time &&
 			sud_reestr == rhs.sud_reestr &&
 			application_date == rhs.application_date &&
-			company_id == rhs.company_id;
+			company_id == rhs.company_id &&
+			weight == rhs.weight;
 	}
 
 	bool operator!=(const Project& rhs) const {
@@ -156,6 +170,7 @@ public:
 		sud_reestr = rhs.sud_reestr;
 		application_date = rhs.application_date;
 		company_id = rhs.company_id;
+		weight = rhs.weight;
 	}
 
 	static void enterProject(Project& tmp) {
@@ -218,7 +233,20 @@ public:
 		} while (true);
 		tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
 	}
+	//----------------------------------------------------------------------------
+	/*static std::vector<std::string> toVector(std::map<std::string, Project> a) {
+		std::vector<std::string> tmp;
+		for (auto it : a) {
+			tmp.push_back(it.first);
+		}
+		return tmp;
+	}*/
 };
+
+// Сравнение по весу
+bool compareWeight(Project obj1, Project obj2) {
+	return (obj1.getWeight() < obj2.getWeight());
+}
 
 class ProjectSock : public Project {
 public:

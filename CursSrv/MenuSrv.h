@@ -5,7 +5,7 @@
 #include "User.h"
 #include "Company.h"
 #include "DBWork.h"
-
+#include "Rating.h"
 
 using namespace std;
 
@@ -14,6 +14,8 @@ private:
 	SOCKET sock;
 	DBWork db;
 	tUser userC;
+	vector<size_t> vcProjectOp;	//Вектор проектов для оценивания
+	vector<double> vcMarksOp;	//Вектор оценок проектов
 public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 	//All_info ai;
@@ -36,7 +38,6 @@ public:
 
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
-		//db.connect("tcp://10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
 		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
@@ -517,28 +518,31 @@ public:
 	}
 
 	//------- Список проектов vector --------
-	size_t listProject(vector<string>& vc) {
+	size_t listProject(vector<string>& vc, size_t mode = 0) {
 		int ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuide("project", 2);
-		sendString(sock, "menu0");
+		sendString(sock, "menu" + std::to_string(mode));
 		sendString(sock, toString(vc, "Выберите проект: "));
 		ch = takeInt(sock);
 		return ch;
 	}
 
 	//--------- Список проектов map ---------
-	size_t listProject(map<string, size_t>& vc) {
+	size_t listProject(map<string, size_t>& vc, size_t mode = 0) {
 		int ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("project", 2);
 		vector<string> tmp = toVector(vc);
-		sendString(sock, "menu0");
+		sendString(sock, "menu" + std::to_string(mode));
 		sendString(sock, toString(tmp, "Выберите проект: "));
 		ch = takeInt(sock);
-		if (ch != 0) {
-			//ch = vc[tmp[ch]];
-			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+		if (ch != 0 && ch != tmp.size() + 1) {
+			////ch = vc[tmp[ch]];
+			//ch = ch - 1;
+			std::cout << ch << std::endl;
+			//std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			std::cout << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
 			ch = vc[tmp[ch - 1]];
 		}
 		return ch;
@@ -582,11 +586,11 @@ public:
 		std::cout << "---------------------------------------" << std::endl;
 		db.deleteProject(oldProject.getProjectId());
 	}
-	
+
 	//---------- Ввод новой оценки ----------
 	void addMark() {
-		MarkSock mark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
-		mark.enterMark();
+		MarkSock mark(sock);
+		mark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
 		//mark.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
 		std::cout << mark;
 		db.addMark(mark);
@@ -594,7 +598,7 @@ public:
 		std::cout << mark;
 		std::cout << "---------------------------------------" << std::endl;
 	}
-	
+
 	//--------- Список оценок map ---------
 	size_t listMark(map<string, size_t>& vc) {
 		int ch = 0;
@@ -611,7 +615,7 @@ public:
 		}
 		return ch;
 	}
-	
+
 	//-------- Редактирование оценки --------
 	void editMark() {
 		std::map<std::string, size_t> marks;
@@ -625,16 +629,16 @@ public:
 		std::cout << "-------- Редактирование оценки --------" << std::endl;
 		std::cout << oldMark;
 		std::cout << "---------------------------------------" << std::endl;
-		MarkSock newMark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
-		newMark.enterMark();
-		newMark.setMarKId(oldMark.getMarkId());
+		MarkSock newMark(sock);
+		newMark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		newMark.setMarkId(oldMark.getMarkId());
 		//newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
 		//db.editProject(newProject, oldProject.getProjectId());
 		db.editMark(newMark, newMark.getMarkId());
 		std::cout << newMark;
 		std::cout << "---------------------------------------" << std::endl;
 	}
-	
+
 	//----------- Удаление оценки -----------
 	void deleteMark() {
 		std::map<std::string, size_t> marks;
@@ -667,7 +671,7 @@ public:
 		Date tmpDate{};
 		tmpDate.setDateStr("2022/05/06");
 		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
-		sendString(sock, "menu");
+		sendString(sock, "menu" + std::to_string(1));
 		sendString(sock, strMenu);
 		strcpy(p, "");
 		p[0] = '\0';
@@ -683,6 +687,7 @@ public:
 			UserSock user(sock, db.getGuide("user_role", 1));
 			CompanySock cmp(sock);
 			ProjectSock project(sock, db.getGuide("company", 2));
+			Rating rating(sock);
 			switch (i) {
 			case 1:
 				//Подключение пользователя
@@ -730,11 +735,27 @@ public:
 
 
 
-				/*ch = listProject(userS);
-				std::cout << ch;*/
+				//ch = listProject(userS, 2); //, 2
+				//std::cout << ch;
 
-				deleteMark();
+				//deleteMark();
 
+				//// Выбор экспертов
+				//rating.selectExperts(db.getGuideMap("user", 2, 1));
+				//// Выбор проектов
+				//rating.selectProjects(db.getProjectMp());
+				//// Ввод оценок
+				//rating.setNumber(3);
+				//rating.enterRank();
+				//for (auto& it : rating.ranking) {
+				//	for (auto& iit : it.second) {
+				//		db.addMark(iit);
+				//	}
+				//}
+
+				rating.ranking = db.getMpMarks(3);
+				rating.mpExperts = db.getExpertMap(3);
+				rating.setCntExperts();
 
 
 				//menuAdmin();
