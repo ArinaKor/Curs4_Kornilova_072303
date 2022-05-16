@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 class A_menu {
 private:
 	SOCKET sock;
@@ -18,7 +19,7 @@ private:
 	vector<double> vcMarksOp;	//Вектор оценок проектов
 public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
-	//All_info ai;
+
 	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
 	std::string strMenuAdmin = "\tАдминистратор#Просмотр инвестиционных проектов#Добавление#Удаление#Сохранение информации в бд#Поиск#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Вывести результат ранжирования ИП#Редактировать#Выход";
 	std::string strMenuAdminAdd = "Вы хотите добавить: #Новые компании#Новых экспертов#Новые проекты#Назад";
@@ -746,18 +747,43 @@ public:
 				//rating.selectProjects(db.getProjectMp());
 				//// Ввод оценок
 				//rating.setNumber(3);
-				//rating.enterRank();
+				//rating.enterRanks();
 				//for (auto& it : rating.ranking) {
 				//	for (auto& iit : it.second) {
 				//		db.addMark(iit);
 				//	}
 				//}
 
-				rating.ranking = db.getMpMarks(3);
-				rating.mpExperts = db.getExpertMap(3);
+				rating.setNumber(3);
+
+				// Загрузка оценок
+				rating.ranking = db.getMpMarks(rating.getNumber());
+
+
+				// Загрузка экспертов в ранже
+				rating.mpExperts = db.getExpertMapMark(rating.getNumber());
 				rating.setCntExperts();
 
+				// Загрузка проектов в ранже
+				rating.vcProjects = db.getProjectVcMark(rating.getNumber());
+				rating.setCntProjects();
 
+				//// Вывод проектов ранжа
+				//rating.printVcProjects();
+				//rating.printVcProjectsSock("file");
+
+				// Расчет весов и сумм по парным сравнениям
+				rating.vcProjects = db.getWeightVcMark(rating.getNumber());
+				rating.rankingTotal = db.getVcTotalMarks(rating.getNumber());
+
+				// Вывод таблицы ранжирования
+				rating.printRatingTable();
+				rating.printRatingTableSock("file");
+
+				// Вывод результата ранжирования
+				rating.printRating();
+				rating.printRatingSock("file");
+				
 				//menuAdmin();
 				break;
 			case 3:
