@@ -458,6 +458,13 @@ public:
 			//exit(1);
 		}
 	}
+
+	void addMarkVc(std::vector<Mark> _mark) {
+		for (auto&& it : _mark) {
+			addMark(it);
+		}
+	}
+
 	// Редактировать оценку
 	void editMark(Mark mark, size_t m_id) {
 		try {
@@ -492,12 +499,14 @@ public:
 		return tmp;
 	}
 
-	// Получить отражение оценок для набора и пользователя
-	std::map<size_t, std::vector<Mark>> getMpMarks(size_t _number /*, size_t _userId*/) {
+	// Получить map оценок для набора и пользователя
+	std::map<size_t, std::vector<Mark>> getMpMarks(size_t _number, size_t _userId =0) {
 		Mark tmp;
 		std::map<size_t, std::vector<Mark>> tmpRn;
 		std::vector<Mark> tmpMrk;
-		pstmt = con->prepareStatement("SELECT * FROM mark WHERE number = ? ORDER BY user_id, project1_id, project2_id;"); // AND user_id = ? ; ");
+		std::string strUserId;
+		if (_userId != 0) strUserId = " AND user_id = " + std::to_string(_userId);
+		pstmt = con->prepareStatement("SELECT * FROM mark WHERE number = ?" + strUserId + ";"); //  ORDER BY user_id, project1_id, project2_id // AND user_id = ? ; ");
 		pstmt->setInt(1, _number);
 		//pstmt->setInt(2, _userId);
 		size_t lastUser = -1;
@@ -659,6 +668,21 @@ public:
 		return tmp + 1;
 	}
 
+	size_t getCountExpert(size_t _number, size_t _uid) {
+		size_t cnt = 0;
+		size_t tmp = 0;
+		pstmt = con->prepareStatement("SELECT COUNT(number) FROM mark WHERE number = ? AND user_id = ? GROUP BY number;");
+		pstmt->setInt(1, _number);
+		pstmt->setInt(2, _uid);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			cnt = result->getInt(1);
+		}
+		delete result;
+		return cnt;
+	}
+
+
 	// Удалить оценку по id
 	void deleteMark(size_t m_id) {
 		try {
@@ -667,7 +691,22 @@ public:
 			result = pstmt->executeQuery();
 		}
 		catch (sql::SQLException e) {
-			cout << "Error {DELETE mark mark_id}  message: " << e.what() << endl;
+			cout << "Error {DELETE mark : mark_id}  message: " << e.what() << endl;
+			system("pause");
+			//exit(1);
+		}
+	}
+
+	// Удалить оценку по number и user_id
+	void deleteMark(size_t _number, size_t _user_id) {
+		try {
+			pstmt = con->prepareStatement("DELETE FROM mark WHERE number = ? AND user_id = ?;");
+			pstmt->setInt(1, _number);
+			pstmt->setInt(2, _user_id);
+			result = pstmt->executeQuery();
+		}
+		catch (sql::SQLException e) {
+			cout << "Error {DELETE mark : number && user_id}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
 		}

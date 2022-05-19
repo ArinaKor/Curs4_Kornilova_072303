@@ -88,6 +88,12 @@ public:
 
 	void addProject(Project tmp) {
 		vcProjects.push_back(tmp);
+		setCntProjects();
+	}
+
+	void addExpert(std::string tmpName, size_t tmpId) {
+		mpExperts.insert(make_pair(tmpName, tmpId));
+		setCntExperts();
 	}
 
 
@@ -186,7 +192,32 @@ public:
 	}
 
 	//Ввод оценок одним экспертом
-	std::vector<Mark> enterRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
+	void editRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
+		MarkSock tmpMark(sock);
+		std::vector<Mark> mrk;
+		if (flag == 1) {
+			std::cout << "--------------------------------------------" << std::endl;
+			std::cout << "Ввод оценок (для ранжирования) одним экспертом!" << std::endl;
+			printVcProjects();
+		}
+		for (auto& it : ranking[expert.second]) {
+			/// Редактирование существующих оценок (не забыть про вектор проектов)
+		}
+
+		/*for (size_t j = 0; j < cntProjects; j++) {
+			for (size_t k = j + 1; k < cntProjects; k++) {
+				std::cout << "Эксперт " << expert.first << "(" << expert.second << ")" << " -- " << j + 1 <<
+					"(" << vcProjects[j].getProjectId() << ") : " << k + 1 << "(" << vcProjects[k].getProjectId() << "): ";
+				tmpMark.enterMark(number, expert, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
+				std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
+				mrk.push_back(MarkSock::toMark(tmpMark));
+			}
+		}
+		ranking.insert(make_pair(expert.second, mrk));*/
+	}
+
+	//Ввод оценок одним экспертом
+	void enterRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
 		if (flag == 1) {
@@ -207,13 +238,12 @@ public:
 	}
 
 	//Ввод оценок всеми экспертами
-	void enterRanks(size_t _number) {
+	void enterRanks() {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
 		std::cout << "--------------------------------------------" << std::endl;
 		printVcProjects();
 		std::cout << "Ввод оценок (для ранжирования) от всех экспертов!" << std::endl;
-		number = _number;
 		for (auto& it : mpExperts) {
 			mrk.clear();
 			/*for (size_t j = 0; j < cntProjects; j++) {
@@ -226,11 +256,9 @@ public:
 				}
 			}
 			ranking.insert(make_pair(it.second, mrk));*/
-			mrk = enterRank(it);
+			enterRank(it);
 		}
 	}
-
-
 
 	//Расчет суммарных значений
 	void calcTotal() {
