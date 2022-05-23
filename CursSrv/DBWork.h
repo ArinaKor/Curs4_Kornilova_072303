@@ -66,8 +66,8 @@ public:
 		database = std::move(_database);
 		try {
 			driver = get_driver_instance();
-			//con = driver->connect(encryptChars(database) + server, encryptChars(username), encryptChars(password));
-			con = driver->connect(server, username, password);
+			con = driver->connect(encryptChars(server), encryptChars(username), encryptChars(password));
+			//con = driver->connect(server, username, password);
 			std::cout << "----------------------------------------------------------" << std::endl;
 			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
 		}
@@ -76,8 +76,8 @@ public:
 			system("pause");
 			exit(1);
 		}
-		//con->setSchema(encryptChars(database));
-		con->setSchema(database);
+		con->setSchema(encryptChars(database));
+		//con->setSchema(database);
 
 		std::cout << "Успешное открытие БД." << std::endl;
 		std::cout << "----------------------------------------------------------" << std::endl;
@@ -656,7 +656,7 @@ public:
 
 		strQuery += "SELECT project1_id, project2_id, ROUND(SUM(mark.mark1), 2) AS mark1, ROUND(SUM(mark.mark2), 2) AS mark2 ";
 		strQuery += "FROM mark WHERE mark.number = ? ";
-		strQuery += "GROUP BY mark.project1_id + project2_id";
+		strQuery += "GROUP BY mark.project1_id, project2_id";
 
 		pstmt = con->prepareStatement(strQuery);
 		pstmt->setInt(1, _number);
