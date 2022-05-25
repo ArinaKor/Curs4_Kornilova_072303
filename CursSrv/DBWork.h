@@ -46,7 +46,8 @@ public:
 			driver = get_driver_instance();
 			con = driver->connect(encryptChars(database) + server, encryptChars(username), encryptChars(password));
 			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			//std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			std::cout << "Успешное соединение к Базе данных." << std::endl;
 		}
 		catch (const sql::SQLException& e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
@@ -73,7 +74,8 @@ public:
 			con = driver->connect(encryptChars(server), encryptChars(username), encryptChars(password));
 			//con = driver->connect(server, username, password);
 			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			//std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			std::cout << "Успешное соединение к Базе Данных." << std::endl;
 		}
 		catch (const sql::SQLException& e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;

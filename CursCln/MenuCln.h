@@ -75,12 +75,13 @@ int vcChoice(const std::vector<std::string>& vc, const std::string& topStr, size
 //Функция выбора 
 int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t cancel = 1) {
 	int count = 2;
-	size_t cAll = 0, cCancel=0;
+	size_t cAll = 0, cCancel = 0;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	if (cancel == vc.size()) {
 		cAll = cancel;
 		cancel = 0;
-		vc.push_back(" -= "+topStr+" = -");
+		vc.push_back(" -= " + topStr + " = -");
+
 	}
 	if (cancel == 0) {
 		vc.push_back(" -= ОТМЕНА =-");
@@ -113,7 +114,7 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 		if (pressed == 27) { //Если  нажатие клавишей Esc
 			count = vc.size();
 			break;
-		};	
+		};
 	}
 
 	if (cancel == 0) {
@@ -121,7 +122,7 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 		//if (count == cAll) return cAll;
 	}
 	if (cAll != 0) {
-		if (count == cAll) return cAll;
+		if (count == cAll + 1) return cAll;
 	}
 	return count - 1;
 }
@@ -145,7 +146,7 @@ public:
 	}
 
 	void start(const size_t& modeMenu) {
-		
+
 		std::string str;
 		//char str[50];
 		while (true) {
@@ -170,7 +171,7 @@ public:
 				int chs = 1;
 				if (modeMenu == 1) chs = vcChoice(vcMenu, topS, v);
 				else chs = vcChoicePress(vcMenu, topS, v);
-				sendInt(cn,chs);
+				sendInt(cn, chs);
 				str = "";
 			}
 			if (str == "data") {
