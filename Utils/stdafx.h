@@ -27,6 +27,7 @@
 #include <map>
 #include <cstdlib>
 #include <utility>
+#include <numeric>
 
 #pragma warning(pop) //For /Wall
 
@@ -98,7 +99,7 @@ namespace Checks {
 }
 
 //----------------------------------------------------------------------------
-void setStats(std::string str) {
+void setStats(const std::string& str) {
 	if (!str.empty()) {
 		if (str.find("menu") != std::string::npos) {
 			modeStat = 0;
@@ -113,14 +114,14 @@ void setStats(std::string str) {
 	vcStats[modeStat]++;
 }
 //----------------------------------------------------------------------------
-void sendInt(SOCKET newConnection, int a) {
+void sendInt(SOCKET newConnection, const int& a) {
 	setStats("");
 	char msg[200];
 	itoa(a, msg, 10);
 	send(newConnection, msg, sizeof(msg), 0);
 }
 //----------------------------------------------------------------------------
-void sendDouble(SOCKET newConnection, double a) {
+void sendDouble(SOCKET newConnection, const double& a) {
 	setStats("");
 	std::string b;
 	b = std::to_string(a);
@@ -129,10 +130,10 @@ void sendDouble(SOCKET newConnection, double a) {
 	send(newConnection, msg, sizeof(msg), 0);
 }
 //----------------------------------------------------------------------------
-void sendString(SOCKET newConnection, std::string a) {
+void sendString(SOCKET newConnection, const std::string& a) {
 	setStats(a);
 	//    char* msg = new char[a.size()];
-	char msg[300];
+	char msg[1000];
 	//    strcpy(msg, a.c_str());
 	strcpy(msg, a.c_str());
 	//size_t size_a = a.size();
@@ -158,7 +159,7 @@ double takeDouble(SOCKET newConnection) {
 //----------------------------------------------------------------------------
 std::string takeString(SOCKET newConnection) {
 	setStats("");
-	char msg[300];
+	char msg[1000];
 	recv(newConnection, msg, sizeof(msg), 0);
 	std::string str = std::string(msg);
 	return str;
@@ -178,35 +179,21 @@ struct tUser {
 	std::string Role;
 };
 //----------------------------------------------------------------------------
-std::string input_pass(/*char *str1*/)    //Функция ввода массива символов
-{                                                                //name - что вводим,
-	//str строка,
-	//num=1 если нужны только символы
-	size_t nn = 0;
-	size_t mm = 0;
-	int num = 0;
+std::string input_pass()    //Функция ввода массива символов
+{
+	char nn = 0;
+	char mm = 0;
 	char str[20]{};
 	do {
 		nn = _getch();
 		if ((nn != 10) && (nn != 13)) {
-			if (num == 1) {
-				if ((nn >= '0') && (nn <= '9')) {
-					str[mm] = nn;
-					printf("%c", str[mm]);
-					mm++;
-				}
-			}
-			else {
-				str[mm] = nn;
-				//printf("%c", str[mm]);
-				printf("*");
-				mm++;
-			}
+			str[mm] = nn;
+			printf("*");
+			mm++;
 		}
 	} while ((nn != 10) && (nn != 13));
 	printf("\n");
 	str[mm] = '\0';
-	//strncpy(str1, str, mm);
 	return str;
 }
 //----------------------------------------------------------------------------
@@ -240,26 +227,44 @@ std::vector<std::string> split(const std::string& s, char delimiter = '#') {
 	return tokens;
 }
 //----------------------------------------------------------------------------
-std::string toString(std::vector<std::string> a, std::string text = "") {
-	for (const auto& it : a) {
-		text += "#" + it;
-	}
-	return text;
+//std::string toString(std::vector<std::string> a, std::string text = "") {
+		//for (const auto& it : a) {
+		//	text += "#" + it;
+		//}
+		//return text;
+//}
+std::string toString(std::vector<std::string> a, const std::string& text = "") {
+	std::string s = std::accumulate(a.begin(), a.end(),
+		text, // начинаем с первого элемента
+		[](std::string a, const std::string& b) { return std::move(a) + '#' + b;
+		});
+	return s;
 }
 //----------------------------------------------------------------------------
-std::string toString(std::map<std::string, size_t> a, std::string text = "") {
-	for (const auto& it : a) {
-		text += "#" + it.first;
-	}
-	return text;
+//std::string toString(std::map<std::string, size_t> a, std::string text = "") {
+//	for (const auto& it : a) {
+//		text += "#" + it.first;
+//	}
+//	return text;
+//}
+std::string toString(std::map<std::string, size_t> a, const std::string& text = "") {
+	std::string s = std::accumulate(a.begin(), a.end(),
+		text, // начинаем с первого элемента
+		[](std::string a, const std::pair<std::string, size_t>& b) { return std::move(a) + '#' + b.first;
+		});
+	return s;
 }
 //----------------------------------------------------------------------------
 template<typename T>
 std::vector<std::string> toVector(std::map<std::string, T> a) {
 	std::vector<std::string> tmp;
-	for (const auto& it : a) {
-		tmp.push_back(it.first);
-	}
+
+	//for (const auto& it : a) {
+	//	tmp.push_back(it.first);
+	//}
+
+	std::transform(a.begin(), a.end(), std::back_inserter(tmp),	[](const auto& kv) { return kv.first; });
+
 	return tmp;
 }
 //----------------------------------------------------------------------------
@@ -274,7 +279,7 @@ void sendMenu(SOCKET Connection, std::vector<std::string> a) {
 }
 //----------------------------------------------------------------------------
 std::vector<std::string> takeMenu(SOCKET Connection) {
-	char msg[300]{};
+	char msg[1000]{};
 	recv(Connection, msg, sizeof(msg), 0);
 	std::string str = std::string(msg);
 	return split(str, '#');
@@ -289,7 +294,7 @@ int vcChoice(const std::string& strMenu, std::vector<std::string> vc, bool back 
 	int ch = -1;
 	do {
 		std::cin >> ch;
-		fflush(stdin);
+		std::cin.clear();
 	} while ((ch < 0) || (ch > vc.size()));
 	return ch;
 }
@@ -364,6 +369,5 @@ std::string acp(const std::string& s)
 {
 	return wstr_to_str(str_to_wstr(s, CP_UTF8), CP_ACP);
 }
-//----------------------------------------------------------------------------
 
 #endif //SRV_STDAFX_H
