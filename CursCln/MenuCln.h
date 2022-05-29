@@ -92,7 +92,7 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 		system("cls");//очистка экрана 
 		std::cout << vc[0] << std::endl;		//Вывод сообщения на экран 
 		for (size_t i = 1; i < vc.size(); ++i) {//Вывод опций на экран
-			if ((i + 1) == count) cout << "\x1b[48m" << "\x1b[34m>" << vc[i] << "\x1b[48m" << "\x1b[30m" << endl;
+			if ((i + 1) == count) cout << bold_on << ">" << vc[i] << bold_off << endl;
 			else cout << " " << vc[i] << endl;
 		}
 
@@ -114,7 +114,7 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 		if (pressed == 27) { //Если  нажатие клавишей Esc
 			count = vc.size();
 			break;
-		};
+		};	
 	}
 
 	if (cancel == 0) {
@@ -146,7 +146,7 @@ public:
 	}
 
 	void start(const size_t& modeMenu) {
-
+		
 		std::string str;
 		//char str[50];
 		while (true) {
@@ -171,7 +171,7 @@ public:
 				int chs = 1;
 				if (modeMenu == 1) chs = vcChoice(vcMenu, topS, v);
 				else chs = vcChoicePress(vcMenu, topS, v);
-				sendInt(cn, chs);
+				sendInt(cn,chs);
 				str = "";
 			}
 			if (str == "data") {
